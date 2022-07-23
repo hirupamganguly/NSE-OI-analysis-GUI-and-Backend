@@ -105,3 +105,4 @@ def docBystrikeAndDate(strike,today_date):
     return ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched
 
 ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched=docBystrikeAndDate(bankNiftyAtmStrike,today_date)
+print("check")
