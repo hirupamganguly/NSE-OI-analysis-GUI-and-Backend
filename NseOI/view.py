@@ -2,6 +2,12 @@ from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone 
 from datetime import date
+import dash
+import dash_html_components as dhtml
+import dash_core_components as dcc
+import plotly.graph_objects as pgo
+
+
 
 try:
     conn = MongoClient("mongodb://localhost:27017/")
@@ -33,7 +39,8 @@ def docBystrikeAndDate(strike,today_date):
     ce_chng_oi=0
     pe_oi=0
     pe_chng_oi=0
-    bnfByStrikeAndDateCursor=bankNiftyCollection.find({"strikePrice":strike,"date":today_date})
+    #"date":today_date
+    bnfByStrikeAndDateCursor=bankNiftyCollection.find({"strikePrice":strike})
     for bnfByStrikeAndDate in bnfByStrikeAndDateCursor: # get 3 expiry data of a strike of Today
         objMap={}
         if date.today().weekday() == 3 or date.today().weekday() == 2: # for wednessday and thursday add oi and chnginoi of current and next expiry
@@ -102,7 +109,17 @@ def docBystrikeAndDate(strike,today_date):
                 pe_ltp_fetched.append(objMap["pe_lastPrice"])
                 ce_impvol_fetched.append(objMap["ce_impliedVolatility"])
                 pe_impvol_fetched.append(objMap["pe_impliedVolatility"])
-    return ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched
+    return ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list
 
-ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched=docBystrikeAndDate(bankNiftyAtmStrike,today_date)
+ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDate(bankNiftyAtmStrike,today_date)
 print("check")
+
+app=dash.Dash()
+
+def strikeWisePlot():
+    fig = pgo.Figure([pgo.Scatter(x = fetched_time_list, y = ce_oi_fetched,line = dict(color = 'firebrick', width = 4), name = 'Google')])
+    fig.update_layout(title = 'Prices over time',xaxis_title = 'Dates',yaxis_title = 'Prices')
+    return fig  
+
+app.layout = dhtml.Div(id = 'parent', children = [dhtml.H1(id = 'H1', children = 'Styling using html components', style = {'textAlign':'center','marginTop':40,'marginBottom':40}),dcc.Graph(id = 'line_plot', figure = strikeWisePlot()) ]) 
+app.run_server()

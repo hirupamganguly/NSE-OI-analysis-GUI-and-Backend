@@ -84,5 +84,5 @@ while True:
                 niftyObjlist.append(niftyObjmap)
     bankNiftyRecordID = bankNiftyCollection.insert_many(bankNiftyObjlist)
     niftyRecordID = niftyCollection.insert_many(niftyObjlist)
-    print("timeStamp",time_stamp," BankNifty ID: ",bankNiftyRecordID," Nifty ID: ",niftyRecordID)
+    print("timeStamp",fetchedTime," BankNifty ID: ",bankNiftyRecordID," Nifty ID: ",niftyRecordID)
     time.sleep(200)
