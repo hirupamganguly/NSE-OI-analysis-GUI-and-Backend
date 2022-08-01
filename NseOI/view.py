@@ -1,12 +1,13 @@
+from time import time
 from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone 
 from datetime import date
 import dash
-import dash_html_components as dhtml
-import dash_core_components as dcc
+from dash import html as dhtml
+from dash import dcc
 import plotly.graph_objects as pgo
-
+from dash.dependencies import Output, Input
 
 
 try:
@@ -25,7 +26,6 @@ bnfOne=bankNiftyCollection.find_one()
 bankNiftyAtmStrike= round(int(bnfOne["underlyingValue"])/100)*100
 
 def docBystrikeAndDate(strike,today_date):
-    objMapList=[]
     ce_oi_fetched=[]
     pe_oi_fetched=[]
     fetched_time_list=[]
@@ -39,9 +39,11 @@ def docBystrikeAndDate(strike,today_date):
     ce_chng_oi=0
     pe_oi=0
     pe_chng_oi=0
-    #"date":today_date
-    bnfByStrikeAndDateCursor=bankNiftyCollection.find({"strikePrice":strike})
-    for bnfByStrikeAndDate in bnfByStrikeAndDateCursor: # get 3 expiry data of a strike of Today
+
+    # data comming from DB get 3 expiry data of a strike of Today
+    bnfByStrikeAndDateCursor=bankNiftyCollection.find({"strikePrice":strike,"date":today_date})
+
+    for bnfByStrikeAndDate in bnfByStrikeAndDateCursor: 
         objMap={}
         if date.today().weekday() == 3 or date.today().weekday() == 2: # for wednessday and thursday add oi and chnginoi of current and next expiry
             if bnfByStrikeAndDate["expiryDate"]==bnfByStrikeAndDate["current_expiry"] or bnfByStrikeAndDate["expiryDate"]==bnfByStrikeAndDate["next_expiry"]:
@@ -110,16 +112,41 @@ def docBystrikeAndDate(strike,today_date):
                 ce_impvol_fetched.append(objMap["ce_impliedVolatility"])
                 pe_impvol_fetched.append(objMap["pe_impliedVolatility"])
     return ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list
-
-ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDate(bankNiftyAtmStrike,today_date)
-print("check")
+def docByRecent():
+    recentDocCursor=bankNiftyCollection.find({"strikePrice":{"$gte":bankNiftyAtmStrike-1000,"$lt":bankNiftyAtmStrike+1000},"nse_timestamp":bnfOne["nse_timestamp"]})
+    ce_oi_fetched=[]
+    pe_oi_fetched=[]
+    ce_chng_oi_fetched=[]
+    pe_chng_oi_fetched=[]
+    for recentDoc in recentDocCursor:
+        if recentDoc["expiryDate"]==recentDoc["current_expiry"]:
+            ce_oi_fetched.append(recentDoc["ce_openInterest"])
+            ce_chng_oi_fetched.append(recentDoc["ce_changeinOpenInterest"])
+            pe_oi_fetched.append(recentDoc["pe_openInterest"])
+            pe_chng_oi_fetched.append(recentDoc["pe_changeinOpenInterest"])
+    return ce_oi_fetched,pe_oi_fetched,ce_chng_oi_fetched,pe_chng_oi_fetched
 
 app=dash.Dash()
 
-def strikeWisePlot():
-    fig = pgo.Figure([pgo.Scatter(x = fetched_time_list, y = ce_oi_fetched,line = dict(color = 'firebrick', width = 4), name = 'Google')])
-    fig.update_layout(title = 'Prices over time',xaxis_title = 'Dates',yaxis_title = 'Prices')
-    return fig  
 
-app.layout = dhtml.Div(id = 'parent', children = [dhtml.H1(id = 'H1', children = 'Styling using html components', style = {'textAlign':'center','marginTop':40,'marginBottom':40}),dcc.Graph(id = 'line_plot', figure = strikeWisePlot()) ]) 
+app.layout=dhtml.Div(
+    [
+        dcc.Graph(id="live-update-graph",animate=True),
+        dcc.Interval(
+            id="interval-component",interval=100*1000,n_intervals=0
+        ),
+    ]
+)
+@app.callback(
+    Output("live-update-graph","figure"),
+    Input("interval-component","n_intervals")
+)
+def update_strike_graph(n):
+    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDate(bankNiftyAtmStrike,today_date)
+    graph=pgo.Scatter(x=fetched_time_list,y=ce_oi_fetched)
+    fig=pgo.Figure(graph)
+    fig.layout.autosize=True
+    print("CHECK")
+    return fig
+
 app.run_server()

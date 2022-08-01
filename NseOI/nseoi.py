@@ -58,13 +58,13 @@ while True:
     for data in bankNiftyJson["records"]["data"]:
         strikePrice=data["strikePrice"]
         expiryDate=data["expiryDate"]
-        if strikePrice in range(bankNiftyAtmStrike-2000,bankNiftyAtmStrike+2000,100):
+        if strikePrice in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100):
             if expiryDate in expiry_Dates:
                 bankNiftyObjmap={"date":timestamp,"nse_timestamp":time_stamp,"strikePrice":data["strikePrice"],"expiryDate":data["expiryDate"],"underlyingValue":data["CE"]["underlyingValue"],"ce_lastPrice":data["CE"]["lastPrice"],"ce_openInterest":data["CE"]["openInterest"],"ce_changeinOpenInterest":data["CE"]["changeinOpenInterest"],"ce_totalTradedVolume":data["CE"]["totalTradedVolume"],"ce_impliedVolatility":data["CE"]["impliedVolatility"],"ce_totalBuyQuantity":data["CE"]["totalBuyQuantity"],"ce_totalSellQuantity":data["CE"]["totalSellQuantity"],"pe_lastPrice":data["PE"]["lastPrice"],"pe_openInterest":data["PE"]["openInterest"],"pe_changeinOpenInterest":data["PE"]["changeinOpenInterest"],"pe_totalTradedVolume":data["PE"]["totalTradedVolume"],"pe_impliedVolatility":data["PE"]["impliedVolatility"],"pe_totalBuyQuantity":data["PE"]["totalBuyQuantity"],"pe_totalSellQuantity":data["PE"]["totalSellQuantity"],"current_expiry":expiryDates[0],"next_expiry":expiryDates[1],"fetched_time":fetchedTime}
                 bankNiftyObjlist.append(bankNiftyObjmap)
 
     #Nifty
-    niftyfirstStrike=niftyJson["records"]["data"][50]
+    niftyfirstStrike=niftyJson["records"]["data"][20]
     niftyUnderlyting=niftyfirstStrike["PE"]["underlyingValue"]
     niftyAtmStrike= round(int(niftyUnderlyting)/50)*50
     
@@ -78,7 +78,7 @@ while True:
     for data in niftyJson["records"]["data"]:
         strikePrice=data["strikePrice"]
         expiryDate=data["expiryDate"]
-        if strikePrice in range(niftyAtmStrike-1000,niftyAtmStrike+1000,50):
+        if strikePrice in range(niftyAtmStrike-300,niftyAtmStrike+300,50):
             if expiryDate in expiry_Dates:
                 niftyObjmap={"date":timestamp,"nse_timestamp":time_stamp,"strikePrice":data["strikePrice"],"expiryDate":data["expiryDate"],"underlyingValue":data["CE"]["underlyingValue"],"ce_lastPrice":data["CE"]["lastPrice"],"ce_openInterest":data["CE"]["openInterest"],"ce_changeinOpenInterest":data["CE"]["changeinOpenInterest"],"ce_totalTradedVolume":data["CE"]["totalTradedVolume"],"ce_impliedVolatility":data["CE"]["impliedVolatility"],"ce_totalBuyQuantity":data["CE"]["totalBuyQuantity"],"ce_totalSellQuantity":data["CE"]["totalSellQuantity"],"pe_lastPrice":data["PE"]["lastPrice"],"pe_openInterest":data["PE"]["openInterest"],"pe_changeinOpenInterest":data["PE"]["changeinOpenInterest"],"pe_totalTradedVolume":data["PE"]["totalTradedVolume"],"pe_impliedVolatility":data["PE"]["impliedVolatility"],"pe_totalBuyQuantity":data["PE"]["totalBuyQuantity"],"pe_totalSellQuantity":data["PE"]["totalSellQuantity"],"current_expiry":expiryDates[0],"next_expiry":expiryDates[1],"fetched_time":fetchedTime}
                 niftyObjlist.append(niftyObjmap)
