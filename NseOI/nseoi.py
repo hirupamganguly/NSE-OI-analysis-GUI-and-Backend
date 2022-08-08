@@ -1,3 +1,4 @@
+import string
 import requests
 import pytz
 from pymongo import MongoClient
@@ -5,6 +6,48 @@ from datetime import datetime
 import json
 import time
 from pytz import timezone 
+
+class Datum:
+    strikePrice: int
+    expiryDate: string
+    underlying: string
+    identifier: str
+    openInterest: int
+    changeinOpenInterest: int
+    pchangeinOpenInterest: float
+    totalTradedVolume: int
+    impliedVolatility: float
+    lastPrice: float
+    change: float
+    pChange: float
+    totalBuyQuantity: int
+    totalSellQuantity: int
+    bidQty: int
+    bidprice: float
+    askQty: int
+    askPrice: float
+    underlyingValue: float
+
+    def __init__(self, strikePrice: int, expiryDate: string, underlying: string, identifier: str, openInterest: int, changeinOpenInterest: int, pchangeinOpenInterest: float, totalTradedVolume: int, impliedVolatility: float, lastPrice: float, change: float, pChange: float, totalBuyQuantity: int, totalSellQuantity: int, bidQty: int, bidprice: float, askQty: int, askPrice: float, underlyingValue: float) -> None:
+        self.strikePrice = strikePrice
+        self.expiryDate = expiryDate
+        self.underlying = underlying
+        self.identifier = identifier
+        self.openInterest = openInterest
+        self.changeinOpenInterest = changeinOpenInterest
+        self.pchangeinOpenInterest = pchangeinOpenInterest
+        self.totalTradedVolume = totalTradedVolume
+        self.impliedVolatility = impliedVolatility
+        self.lastPrice = lastPrice
+        self.change = change
+        self.pChange = pChange
+        self.totalBuyQuantity = totalBuyQuantity
+        self.totalSellQuantity = totalSellQuantity
+        self.bidQty = bidQty
+        self.bidprice = bidprice
+        self.askQty = askQty
+        self.askPrice = askPrice
+        self.underlyingValue = underlyingValue
 
 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; '
             'x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
@@ -55,11 +98,24 @@ while True:
     expiry_Dates.append(expiryDates[1])
     expiry_Dates.append(expiryDates[2])
     bankNiftyObjlist=[]
+    
     for data in bankNiftyJson["records"]["data"]:
+        
+
         strikePrice=data["strikePrice"]
         expiryDate=data["expiryDate"]
-        if strikePrice in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100):
+        if strikePrice in range(bankNiftyAtmStrike-28000,bankNiftyAtmStrike+28000,100):
             if expiryDate in expiry_Dates:
+                if expiryDate in expiry_Dates:
+                    if "PE" not in data:  
+                        dataDefaultValuePE=Datum(data["CE"]["strikePrice"],data["CE"]["expiryDate"],data["CE"]["underlying"],data["CE"]["identifier"],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+                        print("defaukt added for PE strike: ",data["CE"]["strikePrice"]," and expiry: ",data["CE"]["expiryDate"])
+                        getattr(data, 'PE', dataDefaultValuePE)
+                    if "CE" not in data:  
+                        dataDefaultValueCE=Datum(data["PE"]["strikePrice"],data["PE"]["expiryDate"],data["PE"]["underlying"],data["PE"]["identifier"],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+                        print("defaukt added for CE strike: ",data["PE"]["strikePrice"]," and expiry: ",data["PE"]["expiryDate"])
+                        getattr(data, 'CE', dataDefaultValueCE)
+
                 bankNiftyObjmap={"date":timestamp,"nse_timestamp":time_stamp,"strikePrice":data["strikePrice"],"expiryDate":data["expiryDate"],"underlyingValue":data["CE"]["underlyingValue"],"ce_lastPrice":data["CE"]["lastPrice"],"ce_openInterest":data["CE"]["openInterest"],"ce_changeinOpenInterest":data["CE"]["changeinOpenInterest"],"ce_totalTradedVolume":data["CE"]["totalTradedVolume"],"ce_impliedVolatility":data["CE"]["impliedVolatility"],"ce_totalBuyQuantity":data["CE"]["totalBuyQuantity"],"ce_totalSellQuantity":data["CE"]["totalSellQuantity"],"pe_lastPrice":data["PE"]["lastPrice"],"pe_openInterest":data["PE"]["openInterest"],"pe_changeinOpenInterest":data["PE"]["changeinOpenInterest"],"pe_totalTradedVolume":data["PE"]["totalTradedVolume"],"pe_impliedVolatility":data["PE"]["impliedVolatility"],"pe_totalBuyQuantity":data["PE"]["totalBuyQuantity"],"pe_totalSellQuantity":data["PE"]["totalSellQuantity"],"current_expiry":expiryDates[0],"next_expiry":expiryDates[1],"fetched_time":fetchedTime}
                 bankNiftyObjlist.append(bankNiftyObjmap)
 
@@ -76,10 +132,19 @@ while True:
     expiry_Dates.append(expiryDates[2])
     niftyObjlist=[]
     for data in niftyJson["records"]["data"]:
+        
         strikePrice=data["strikePrice"]
         expiryDate=data["expiryDate"]
-        if strikePrice in range(niftyAtmStrike-300,niftyAtmStrike+300,50):
+        if strikePrice in range(niftyAtmStrike-2000,niftyAtmStrike+2000,50):
             if expiryDate in expiry_Dates:
+                if "PE" not in data:  
+                    dataDefaultValuePE=Datum(data["CE"]["strikePrice"],data["CE"]["expiryDate"],data["CE"]["underlying"],data["CE"]["identifier"],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+                    print("defaukt added for PE strike: ",data["CE"]["strikePrice"]," and expiry: ",data["CE"]["expiryDate"])
+                    getattr(data, 'PE', dataDefaultValuePE)
+                if "CE" not in data:  
+                     dataDefaultValueCE=Datum(data["PE"]["strikePrice"],data["PE"]["expiryDate"],data["PE"]["underlying"],data["PE"]["identifier"],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+                     print("defaukt added for CE strike: ",data["PE"]["strikePrice"]," and expiry: ",data["PE"]["expiryDate"])
+                     getattr(data, 'CE', dataDefaultValueCE)
                 niftyObjmap={"date":timestamp,"nse_timestamp":time_stamp,"strikePrice":data["strikePrice"],"expiryDate":data["expiryDate"],"underlyingValue":data["CE"]["underlyingValue"],"ce_lastPrice":data["CE"]["lastPrice"],"ce_openInterest":data["CE"]["openInterest"],"ce_changeinOpenInterest":data["CE"]["changeinOpenInterest"],"ce_totalTradedVolume":data["CE"]["totalTradedVolume"],"ce_impliedVolatility":data["CE"]["impliedVolatility"],"ce_totalBuyQuantity":data["CE"]["totalBuyQuantity"],"ce_totalSellQuantity":data["CE"]["totalSellQuantity"],"pe_lastPrice":data["PE"]["lastPrice"],"pe_openInterest":data["PE"]["openInterest"],"pe_changeinOpenInterest":data["PE"]["changeinOpenInterest"],"pe_totalTradedVolume":data["PE"]["totalTradedVolume"],"pe_impliedVolatility":data["PE"]["impliedVolatility"],"pe_totalBuyQuantity":data["PE"]["totalBuyQuantity"],"pe_totalSellQuantity":data["PE"]["totalSellQuantity"],"current_expiry":expiryDates[0],"next_expiry":expiryDates[1],"fetched_time":fetchedTime}
                 niftyObjlist.append(niftyObjmap)
     bankNiftyRecordID = bankNiftyCollection.insert_many(bankNiftyObjlist)
