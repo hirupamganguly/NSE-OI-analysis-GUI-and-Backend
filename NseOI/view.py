@@ -26,6 +26,7 @@ bnfOne=bankNiftyCollection.find_one()
 bankNiftyAtmStrike= round(int(bnfOne["underlyingValue"])/100)*100
 
 def docBystrikeAndDate(strike,today_date):
+
     ce_oi_fetched=[]
     pe_oi_fetched=[]
     fetched_time_list=[]
@@ -112,6 +113,7 @@ def docBystrikeAndDate(strike,today_date):
                 ce_impvol_fetched.append(objMap["ce_impliedVolatility"])
                 pe_impvol_fetched.append(objMap["pe_impliedVolatility"])
     return ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list
+
 def docByRecent():
     recentDocCursor=bankNiftyCollection.find({"strikePrice":{"$gte":bankNiftyAtmStrike-1000,"$lt":bankNiftyAtmStrike+1000},"nse_timestamp":bnfOne["nse_timestamp"]})
     ce_oi_fetched=[]
