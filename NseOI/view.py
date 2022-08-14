@@ -8,7 +8,7 @@ from dash import html as dhtml
 from dash import dcc
 import plotly.graph_objects as pgo
 from dash.dependencies import Output, Input
-
+import plotly.express as px
 
 try:
     conn = MongoClient("mongodb://localhost:27017/")
@@ -22,11 +22,14 @@ bankNiftyCollection = databse["BankNifty"]
 niftyCollection = databse["Nifty"]
 
 today_date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
+dateArr=str.split(today_date,'-')
 bnfOne=bankNiftyCollection.find_one()
 bankNiftyAtmStrike= round(int(bnfOne["underlyingValue"])/100)*100
 
-def docBystrikeAndDate(strike,today_date):
+dropdown_options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)]
 
+def docBystrikeAndDate(strike,today_date):
+    print("fetched data for: ",strike,"ATM is: ",bankNiftyAtmStrike ,"date: ",today_date)
     ce_oi_fetched=[]
     pe_oi_fetched=[]
     fetched_time_list=[]
@@ -132,23 +135,43 @@ app=dash.Dash()
 
 
 app.layout=dhtml.Div(
-    [
+    [ dcc.DatePickerSingle(
+            id='which-date-oi',
+            min_date_allowed=date(int(dateArr[0]),int(dateArr[1])-6,int(dateArr[2])),
+            max_date_allowed=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2])),
+            initial_visible_month=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2])),
+            date=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2]))
+        ),
+         dcc.Dropdown(
+            id='dropdownstrike',
+            options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
+            value=str(bankNiftyAtmStrike),
+            ),
         dcc.Graph(id="live-update-graph",animate=True),
         dcc.Interval(
             id="interval-component",interval=100*1000,n_intervals=0
         ),
     ]
 )
+
 @app.callback(
-    Output("live-update-graph","figure"),
-    Input("interval-component","n_intervals")
+    Output('live-update-graph','figure'),
+    Input('which-date-oi','date'),
+    Input('dropdownstrike','value'),
+    Input('interval-component','n_intervals')
 )
-def update_strike_graph(n):
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDate(bankNiftyAtmStrike,today_date)
-    graph=pgo.Scatter(x=fetched_time_list,y=ce_oi_fetched)
-    fig=pgo.Figure(graph)
-    fig.layout.autosize=True
-    print("CHECK")
+def update_strike_graph(date_value,strikeValue,n):
+    date_string=""
+    if date_value is not None:
+        date_obj=date.fromisoformat(date_value)
+        date_string=date_obj.strftime('%Y-%m-%d')
+        print("Date/Time: ",date_string)
+        print("BankNifty ATM: ",bankNiftyAtmStrike)
+        print("Strike Shown: ",strikeValue)
+    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDate(int(strikeValue),date_string)
+   
+    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True)
+    f=True
     return fig
 
 app.run_server()

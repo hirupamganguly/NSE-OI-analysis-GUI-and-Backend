@@ -62,52 +62,94 @@ while True:
         expiryDate=data["expiryDate"]
         if strikePrice in range(bankNiftyAtmStrike-4000,bankNiftyAtmStrike+4000,100):
             if expiryDate in expiry_Dates:
-                if expiryDate in expiry_Dates:
-                    if "PE" not in data:  
-                        data["PE"]={}
-                        data["PE"]["strikePrice"] = strikePrice
-                        data["PE"]["expiryDate"] = expiryDate
-                        data["PE"]["underlying"] = data["CE"]["underlying"]
-                        data["PE"]["identifier"] = data["CE"]["identifier"]
-                        data["PE"]["openInterest"] = 0
-                        data["PE"]["changeinOpenInterest"] = 0
-                        data["PE"]["pchangeinOpenInterest"] = 0
-                        data["PE"]["totalTradedVolume"] = 0
-                        data["PE"]["impliedVolatility"] = 0
-                        data["PE"]["lastPrice"] = 0
-                        data["PE"]["change"] = 0
-                        data["PE"]["pChange "]= 0
-                        data["PE"]["totalBuyQuantity"] = 0
+                if "PE" not in data:  
+                    data["PE"]={}
+                    data["PE"]["strikePrice"] = strikePrice
+                    data["PE"]["expiryDate"] = expiryDate
+                    data["PE"]["underlying"] = data["CE"]["underlying"]
+                    data["PE"]["identifier"] = data["CE"]["identifier"]
+                    data["PE"]["openInterest"] = 0
+                    data["PE"]["changeinOpenInterest"] = 0
+                    data["PE"]["pchangeinOpenInterest"] = 0
+                    data["PE"]["totalTradedVolume"] = 0
+                    data["PE"]["impliedVolatility"] = 0
+                    data["PE"]["lastPrice"] = 0
+                    data["PE"]["change"] = 0
+                    data["PE"]["pChange "]= 0
+                    data["PE"]["totalBuyQuantity"] = 0
+                    data["PE"]["totalSellQuantity "]= 0
+                    data["PE"]["bidQty"] = 0
+                    data["PE"]["bidprice"] = 0
+                    data["PE"]["askQty"] = 0
+                    data["PE"]["askPrice"] = 0
+                    data["PE"]["underlyingValue"] = bankNiftyUnderlyting
+                else:
+                    if "totalSellQuantity" not in data["PE"]:
                         data["PE"]["totalSellQuantity "]= 0
-                        data["PE"]["bidQty"] = 0
-                        data["PE"]["bidprice"] = 0
-                        data["PE"]["askQty"] = 0
-                        data["PE"]["askPrice"] = 0
-                        data["PE"]["underlyingValue"] = bankNiftyUnderlyting
+                    if "totalBuyQuantity" not in data["PE"]:
+                        data["PE"]["totalBuyQuantity "]= 0
+                    if "openInterest" not in data["PE"]:
+                        data["PE"]["openInterest "]= 0
+                    if "changeinOpenInterest" not in data["PE"]:
+                        data["PE"]["changeinOpenInterest "]= 0
+                    if "pchangeinOpenInterest" not in data["PE"]:
+                        data["PE"]["pchangeinOpenInterest "]= 0
+                    if "totalTradedVolume" not in data["PE"]:
+                        data["PE"]["totalTradedVolume "]= 0
+                    if "impliedVolatility" not in data["PE"]:
+                        data["PE"]["impliedVolatility "]= 0
+                    if "lastPrice" not in data["PE"]:
+                        data["PE"]["lastPrice "]= 0
+                    if "change" not in data["PE"]:
+                        data["PE"]["change "]= 0
+                    if "pChange" not in data["PE"]:
+                        data["PE"]["pChange "]= 0
 
-                    if "CE" not in data:  
-                        data["CE"]={}
-                        data["CE"]["strikePrice"] = strikePrice
-                        data["CE"]["expiryDate"] = expiryDate
-                        data["CE"]["underlying"] = data["PE"]["underlying"]
-                        data["CE"]["identifier"] = data["PE"]["identifier"]
-                        data["CE"]["openInterest"] = 0
-                        data["CE"]["changeinOpenInterest"] = 0
-                        data["CE"]["pchangeinOpenInterest"] = 0
-                        data["CE"]["totalTradedVolume"] = 0
-                        data["CE"]["impliedVolatility"] = 0
-                        data["CE"]["lastPrice"] = 0
-                        data["CE"]["change"] = 0
-                        data["CE"]["pChange "]= 0
-                        data["CE"]["totalBuyQuantity"] = 0
+                if "CE" not in data:  
+                    data["CE"]={}
+                    data["CE"]["strikePrice"] = strikePrice
+                    data["CE"]["expiryDate"] = expiryDate
+                    data["CE"]["underlying"] = data["PE"]["underlying"]
+                    data["CE"]["identifier"] = data["PE"]["identifier"]
+                    data["CE"]["openInterest"] = 0
+                    data["CE"]["changeinOpenInterest"] = 0
+                    data["CE"]["pchangeinOpenInterest"] = 0
+                    data["CE"]["totalTradedVolume"] = 0
+                    data["CE"]["impliedVolatility"] = 0
+                    data["CE"]["lastPrice"] = 0
+                    data["CE"]["change"] = 0
+                    data["CE"]["pChange "]= 0
+                    data["CE"]["totalBuyQuantity"] = 0
+                    data["CE"]["totalSellQuantity "]= 0
+                    data["CE"]["bidQty"] = 0
+                    data["CE"]["bidprice"] = 0
+                    data["CE"]["askQty"] = 0
+                    data["CE"]["askPrice"] = 0
+                    data["CE"]["underlyingValue"] = bankNiftyUnderlyting
+                else:
+                    if "totalSellQuantity" not in data["CE"]:
                         data["CE"]["totalSellQuantity "]= 0
-                        data["CE"]["bidQty"] = 0
-                        data["CE"]["bidprice"] = 0
-                        data["CE"]["askQty"] = 0
-                        data["CE"]["askPrice"] = 0
-                        data["CE"]["underlyingValue"] = bankNiftyUnderlyting
+                    if "totalBuyQuantity" not in data["CE"]:
+                        data["CE"]["totalBuyQuantity "]= 0
+                    if "openInterest" not in data["CE"]:
+                        data["CE"]["openInterest "]= 0
+                    if "changeinOpenInterest" not in data["CE"]:
+                        data["CE"]["changeinOpenInterest "]= 0
+                    if "pchangeinOpenInterest" not in data["CE"]:
+                        data["CE"]["pchangeinOpenInterest "]= 0
+                    if "totalTradedVolume" not in data["CE"]:
+                        data["CE"]["totalTradedVolume "]= 0
+                    if "impliedVolatility" not in data["CE"]:
+                        data["CE"]["impliedVolatility "]= 0
+                    if "lastPrice" not in data["CE"]:
+                        data["CE"]["lastPrice "]= 0
+                    if "change" not in data["CE"]:
+                        data["CE"]["change "]= 0
+                    if "pChange" not in data["CE"]:
+                        data["CE"]["pChange "]= 0
 
                 bankNiftyObjmap={"date":timestamp,"nse_timestamp":time_stamp,"strikePrice":data["strikePrice"],"expiryDate":data["expiryDate"],"underlyingValue":data["CE"]["underlyingValue"],"ce_lastPrice":data["CE"]["lastPrice"],"ce_openInterest":data["CE"]["openInterest"],"ce_changeinOpenInterest":data["CE"]["changeinOpenInterest"],"ce_totalTradedVolume":data["CE"]["totalTradedVolume"],"ce_impliedVolatility":data["CE"]["impliedVolatility"],"ce_totalBuyQuantity":data["CE"]["totalBuyQuantity"],"ce_totalSellQuantity":data["CE"]["totalSellQuantity"],"pe_lastPrice":data["PE"]["lastPrice"],"pe_openInterest":data["PE"]["openInterest"],"pe_changeinOpenInterest":data["PE"]["changeinOpenInterest"],"pe_totalTradedVolume":data["PE"]["totalTradedVolume"],"pe_impliedVolatility":data["PE"]["impliedVolatility"],"pe_totalBuyQuantity":data["PE"]["totalBuyQuantity"],"pe_totalSellQuantity":data["PE"]["totalSellQuantity"],"current_expiry":expiryDates[0],"next_expiry":expiryDates[1],"fetched_time":fetchedTime}
+
                 bankNiftyObjlist.append(bankNiftyObjmap)
 
     #Nifty
@@ -148,6 +190,27 @@ while True:
                     data["PE"]["askQty"] = 0
                     data["PE"]["askPrice"] = 0
                     data["PE"]["underlyingValue"] = bankNiftyUnderlyting
+                else:
+                    if "totalSellQuantity" not in data["PE"]:
+                        data["PE"]["totalSellQuantity "]= 0
+                    if "totalBuyQuantity" not in data["PE"]:
+                        data["PE"]["totalBuyQuantity "]= 0
+                    if "openInterest" not in data["PE"]:
+                        data["PE"]["openInterest "]= 0
+                    if "changeinOpenInterest" not in data["PE"]:
+                        data["PE"]["changeinOpenInterest "]= 0
+                    if "pchangeinOpenInterest" not in data["PE"]:
+                        data["PE"]["pchangeinOpenInterest "]= 0
+                    if "totalTradedVolume" not in data["PE"]:
+                        data["PE"]["totalTradedVolume "]= 0
+                    if "impliedVolatility" not in data["PE"]:
+                        data["PE"]["impliedVolatility "]= 0
+                    if "lastPrice" not in data["PE"]:
+                        data["PE"]["lastPrice "]= 0
+                    if "change" not in data["PE"]:
+                        data["PE"]["change "]= 0
+                    if "pChange" not in data["PE"]:
+                        data["PE"]["pChange "]= 0
 
                 if "CE" not in data:  
                     data["CE"]={}
@@ -170,9 +233,32 @@ while True:
                     data["CE"]["askQty"] = 0
                     data["CE"]["askPrice"] = 0
                     data["CE"]["underlyingValue"] = bankNiftyUnderlyting
+                else:
+                    if "totalSellQuantity" not in data["CE"]:
+                        data["CE"]["totalSellQuantity "]= 0
+                    if "totalBuyQuantity" not in data["CE"]:
+                        data["CE"]["totalBuyQuantity "]= 0
+                    if "openInterest" not in data["CE"]:
+                        data["CE"]["openInterest "]= 0
+                    if "changeinOpenInterest" not in data["CE"]:
+                        data["CE"]["changeinOpenInterest "]= 0
+                    if "pchangeinOpenInterest" not in data["CE"]:
+                        data["CE"]["pchangeinOpenInterest "]= 0
+                    if "totalTradedVolume" not in data["CE"]:
+                        data["CE"]["totalTradedVolume "]= 0
+                    if "impliedVolatility" not in data["CE"]:
+                        data["CE"]["impliedVolatility "]= 0
+                    if "lastPrice" not in data["CE"]:
+                        data["CE"]["lastPrice "]= 0
+                    if "change" not in data["CE"]:
+                        data["CE"]["change "]= 0
+                    if "pChange" not in data["CE"]:
+                        data["CE"]["pChange "]= 0
 
                 niftyObjmap={"date":timestamp,"nse_timestamp":time_stamp,"strikePrice":data["strikePrice"],"expiryDate":data["expiryDate"],"underlyingValue":data["CE"]["underlyingValue"],"ce_lastPrice":data["CE"]["lastPrice"],"ce_openInterest":data["CE"]["openInterest"],"ce_changeinOpenInterest":data["CE"]["changeinOpenInterest"],"ce_totalTradedVolume":data["CE"]["totalTradedVolume"],"ce_impliedVolatility":data["CE"]["impliedVolatility"],"ce_totalBuyQuantity":data["CE"]["totalBuyQuantity"],"ce_totalSellQuantity":data["CE"]["totalSellQuantity"],"pe_lastPrice":data["PE"]["lastPrice"],"pe_openInterest":data["PE"]["openInterest"],"pe_changeinOpenInterest":data["PE"]["changeinOpenInterest"],"pe_totalTradedVolume":data["PE"]["totalTradedVolume"],"pe_impliedVolatility":data["PE"]["impliedVolatility"],"pe_totalBuyQuantity":data["PE"]["totalBuyQuantity"],"pe_totalSellQuantity":data["PE"]["totalSellQuantity"],"current_expiry":expiryDates[0],"next_expiry":expiryDates[1],"fetched_time":fetchedTime}
+
                 niftyObjlist.append(niftyObjmap)
+                
     bankNiftyRecordID = bankNiftyCollection.insert_many(bankNiftyObjlist)
     niftyRecordID = niftyCollection.insert_many(niftyObjlist)
     print("timeStamp",fetchedTime," BankNifty ID: ",bankNiftyRecordID," Nifty ID: ",niftyRecordID)
