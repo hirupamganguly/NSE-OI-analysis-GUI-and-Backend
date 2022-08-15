@@ -12,6 +12,7 @@ from dash.dependencies import Output, Input
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
+import pandas as pd
 try:
     conn = MongoClient("mongodb://localhost:27017/")
     print("Connected successfully!!!")
@@ -25,11 +26,51 @@ niftyCollection = databse["Nifty"]
 
 today_date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
 dateArr=str.split(today_date,'-')
-bnfOne=bankNiftyCollection.find_one()
+bnfOneCursor=bankNiftyCollection.find().sort('_id', -1).limit(1)
+bnfOne={}
+for bnf in bnfOneCursor:
+    bnfOne=bnf
+    break
 bankNiftyAtmStrike= round(int(bnfOne["underlyingValue"])/100)*100
 
-nfOne=niftyCollection.find_one()
+nfOneCursor=niftyCollection.find().sort('_id', -1).limit(1)
+nfOne={}
+for nf in nfOneCursor:
+    nfOne=nf
+    break
 niftyAtmStrike= round(int(nfOne["underlyingValue"])/50)*50
+
+def docLatestBankNifty():
+    print("fetched data for: docLatestBankNifty")
+    ce_oi_map={}
+    pe_oi_map={}
+    chng_ce_oi_map={}
+    chng_pe_oi_map={}
+    for i in range (bankNiftyAtmStrike-4000,bankNiftyAtmStrike+4000,100):
+        bnfOneCursor=bankNiftyCollection.find({"strikePrice":i}).sort('_id', -1).limit(1)
+        for bnfData in bnfOneCursor:
+            ce_oi_map[i]=bnfData["ce_openInterest"]
+            pe_oi_map[i]=bnfData["pe_openInterest"]
+            chng_ce_oi_map[i]=bnfData["ce_changeinOpenInterest"]
+            chng_pe_oi_map[i]=bnfData["pe_changeinOpenInterest"]
+    df=pd.DataFrame({'strike':ce_oi_map.keys(),'ce_oi':list(ce_oi_map.values()),'chng_ce_oi':list(chng_ce_oi_map.values()),'pe_oi':list(pe_oi_map.values()),'chng_pe_oi':list(chng_pe_oi_map.values())})
+    return df
+
+def docLatestNifty():
+    print("fetched data for: docLatestNifty")
+    ce_oi_map={}
+    pe_oi_map={}
+    chng_ce_oi_map={}
+    chng_pe_oi_map={}
+    for i in range (niftyAtmStrike-2000,niftyAtmStrike+2000,500):
+        nfOneCursor=niftyCollection.find({"strikePrice":i}).sort('_id', -1).limit(1)
+        for nfData in nfOneCursor:
+            ce_oi_map[i]=nfData["ce_openInterest"]
+            pe_oi_map[i]=nfData["pe_openInterest"]
+            chng_ce_oi_map[i]=nfData["ce_changeinOpenInterest"]
+            chng_pe_oi_map[i]=nfData["pe_changeinOpenInterest"]
+    df=pd.DataFrame({'strike':ce_oi_map.keys(),'ce_oi':list(ce_oi_map.values()),'chng_ce_oi':list(chng_ce_oi_map.values()),'pe_oi':list(pe_oi_map.values()),'chng_pe_oi':list(chng_pe_oi_map.values())})
+    return df
 
 
 
@@ -253,7 +294,20 @@ DateStyle = {
     "width": "100%",
     "text-align": "center"
 }
+BarGraphStyle={
+    "width": "100%",
+}
 app.layout=dhtml.Div([ 
+    dbc.Row([
+        dbc.Col(dhtml.Div([
+            dcc.Graph(id="live-update-barchart1",animate=True,style=BarGraphStyle,
+            )
+        ])),
+        dbc.Col(dhtml.Div([
+            dcc.Graph(id="live-update-barchart2",animate=True,style=BarGraphStyle,
+            )
+        ]))
+    ]),
     dbc.Row([
         dcc.DatePickerSingle(
             id='which-date-oi',
@@ -264,7 +318,7 @@ app.layout=dhtml.Div([
             date=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2])),
         ),
     ]),
-   dbc.Row([
+    dbc.Row([
         # Col 1
         dbc.Col(dhtml.Div([
             dbc.Row([ 
@@ -317,11 +371,10 @@ app.layout=dhtml.Div([
             ]),
         ])),
     
-   ]),
+    ]),
     dcc.Interval(
         id="interval-component",interval=100*1000,n_intervals=0
     ),
-    
 ])  
 
 @app.callback(
@@ -423,5 +476,27 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.layout.autosize=True
     return fig
 
+@app.callback(
+    Output('live-update-barchart1','figure'),
+    Input('interval-component', 'n_intervals')
+)
+def updateBarChart1(n):
+    df=docLatestBankNifty()
+    fig = px.bar(df, x = 'strike', y = ['ce_oi','pe_oi'])
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),barmode='group'),
+    fig.layout.autosize=True
+    return fig
+
+
+@app.callback(
+    Output('live-update-barchart2','figure'),
+    Input('interval-component', 'n_intervals')
+)
+def updateBarChart2(n):
+    df=docLatestNifty()
+    fig = px.bar(df, x = 'strike', y = ['ce_oi','pe_oi'])
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),barmode='group'),
+    fig.layout.autosize=True
+    return fig
 
 app.run_server()
