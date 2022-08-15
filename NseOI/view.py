@@ -1,4 +1,5 @@
 from time import time
+from unicodedata import name
 from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone 
@@ -10,6 +11,7 @@ import plotly.graph_objects as pgo
 from dash.dependencies import Output, Input
 import plotly.express as px
 import dash_bootstrap_components as dbc
+from plotly.subplots import make_subplots
 try:
     conn = MongoClient("mongodb://localhost:27017/")
     print("Connected successfully!!!")
@@ -237,9 +239,9 @@ def docByRecent():
 
 app=dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 ColumnStyle = {
-    "margin-left": "2rem",
-    "margin-right": "2rem",
-    "padding": ".05rem .05rem",
+    "margin-left": "1rem",
+    "margin-right": "1rem",
+    "padding": ".02rem .02rem",
 }
 DateStyle = {
     "background-color": "black",
@@ -251,9 +253,9 @@ DateStyle = {
     "width": "100%",
     "text-align": "center"
 }
-app.layout=dhtml.Div(
-    [   dbc.Row([
-            dcc.DatePickerSingle(
+app.layout=dhtml.Div([ 
+    dbc.Row([
+        dcc.DatePickerSingle(
             id='which-date-oi',
             style=DateStyle,
             min_date_allowed=date(int(dateArr[0]),int(dateArr[1])-6,int(dateArr[2])),
@@ -262,294 +264,164 @@ app.layout=dhtml.Div(
             date=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2])),
         ),
     ]),
-        
-        dbc.Row(
-            [
-                dbc.Col(dhtml.Div([
+   dbc.Row([
+        # Col 1
+        dbc.Col(dhtml.Div([
+            dbc.Row([ 
+            dbc.Col(dhtml.Div([
+                dcc.Dropdown(
+                    id='dropdownStrike1',
+                    style=ColumnStyle,
+                    options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
+                    value=str(bankNiftyAtmStrike),
+                ),
+                ])),
+            dbc.Col(dhtml.Div([
                     dcc.Dropdown(
-                        id='dropdownstrike',
-                        style=ColumnStyle,
-                        options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                        value=str(bankNiftyAtmStrike),
-                    ),
-                    dcc.Graph(id="live-update-graph",animate=True)]),style=ColumnStyle,),
-                dbc.Col(dhtml.Div(
-                    [
-                        dcc.Dropdown(
-                            id='dropdownstrike1',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                            value=str(bankNiftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph1",animate=True),]),style=ColumnStyle,),
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike2',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                            value=str(bankNiftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph2",animate=True),
-                    ]),style=ColumnStyle,),
-            ]
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike3',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(niftyAtmStrike-500,niftyAtmStrike+500,50)],
-                            value=str(niftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph3",animate=True),
-                    ]),style=ColumnStyle,),
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike4',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(niftyAtmStrike-500,niftyAtmStrike+500,50)],
-                            value=str(niftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph4",animate=True),
-                    ]),style=ColumnStyle,),
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike5',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(niftyAtmStrike-500,niftyAtmStrike+500,50)],
-                            value=str(niftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph5",animate=True),
-                    ]),style=ColumnStyle,),
-            ]
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike6',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                            value=str(bankNiftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph6",animate=True),
-                    ]),style=ColumnStyle,),
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike7',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                            value=str(bankNiftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph7",animate=True),
-                    ]),style=ColumnStyle,),
-                dbc.Col(dhtml.Div( [
-                        dcc.Dropdown(
-                            id='dropdownstrike8',
-                            style=ColumnStyle,
-                            options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                            value=str(bankNiftyAtmStrike),
-                        ),
-                        dcc.Graph(id="live-update-graph8",animate=True),
-                    ]),style=ColumnStyle,),
-            ]
-        ),
-        dcc.Interval(
-            id="interval-component",interval=100*1000,n_intervals=0
-        ),
-    ]
-)
+                    id='dropdownType1',
+                    style=ColumnStyle,
+                    options=[{"label":"CE", "value":"CE"},{"label":"PE", "value":"PE"}],
+                    value="CE",
+                ),
+                ])),
+            ]),
+        dbc.Row([
+            dbc.Col(dhtml.Div([
+                dcc.Graph(id="live-update-graph1",animate=True)]),style=ColumnStyle,),
+            ]),
+        ])),
 
-@app.callback(
-    Output('live-update-graph','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True,labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
+        # Col 2
+        dbc.Col(dhtml.Div([
+            dbc.Row([ 
+            dbc.Col(dhtml.Div([
+                dcc.Dropdown(
+                    id='dropdownStrike2',
+                    style=ColumnStyle,
+                    options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
+                    value=str(bankNiftyAtmStrike),
+                ),
+                ])),
+            dbc.Col(dhtml.Div([
+                    dcc.Dropdown(
+                    id='dropdownType2',
+                    style=ColumnStyle,
+                    options=[{"label":"CE", "value":"CE"},{"label":"PE", "value":"PE"}],
+                    value="CE",
+                ),
+                ])),
+            ]),
+        dbc.Row([
+            dbc.Col(dhtml.Div([
+                dcc.Graph(id="live-update-graph2",animate=True)]),style=ColumnStyle,),
+            ]),
+        ])),
+    
+   ]),
+    dcc.Interval(
+        id="interval-component",interval=100*1000,n_intervals=0
+    ),
+    
+])  
 
 @app.callback(
     Output('live-update-graph1','figure'),
     Input('which-date-oi','date'),
-    Input('dropdownstrike1','value'),
+    Input('dropdownStrike1','value'),
+    Input('dropdownType1','value'),
     Input('interval-component','n_intervals')
 )
-def update_strike_graph1(date_value,strikeValue,n):
+def update_strike_graph1(date_value,strikeValue,strikeType,n):
     date_string=""
     if date_value is not None:
         date_obj=date.fromisoformat(date_value)
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True,labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
+    if strikeType=="CE":
+        fig=make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+        )
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_xaxes(title_text="Time")
+        fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+        fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+        fig.update_yaxes(title_text="IV-Data",secondary_y=True)
+        fig.layout.autosize=True
+    else:
+        fig=make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=pe_ltp_fetched,name="LTP-Data"),secondary_y=False,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=pe_impvol_fetched,name="IV-Data"),secondary_y=True,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+        )
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_xaxes(title_text="Time")
+        fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+        fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+        fig.update_yaxes(title_text="IV-Data",secondary_y=True)
+        fig.layout.autosize=True
     return fig
 
 
 @app.callback(
     Output('live-update-graph2','figure'),
     Input('which-date-oi','date'),
-    Input('dropdownstrike2','value'),
+    Input('dropdownStrike2','value'),
+    Input('dropdownType2','value'),
     Input('interval-component','n_intervals')
 )
-def update_strike_graph2(date_value,strikeValue,n):
+def update_strike_graph2(date_value,strikeValue,strikeType,n):
     date_string=""
     if date_value is not None:
         date_obj=date.fromisoformat(date_value)
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
+    if strikeType=="CE":
+        fig=make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+        )
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_xaxes(title_text="Time")
+        fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+        fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+        fig.update_yaxes(title_text="IV-Data",secondary_y=True)
+        fig.layout.autosize=True
+    else:
+        fig=make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=pe_ltp_fetched,name="LTP-Data"),secondary_y=False,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y=pe_impvol_fetched,name="IV-Data"),secondary_y=True,
+        )
+        fig.add_trace(
+            pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+        )
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_xaxes(title_text="Time")
+        fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+        fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+        fig.update_yaxes(title_text="IV-Data",secondary_y=True)
+        fig.layout.autosize=True
     return fig
 
-
-
-@app.callback(
-    Output('live-update-graph3','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike3','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateNifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
-
-@app.callback(
-    Output('live-update-graph4','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike4','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateNifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
-@app.callback(
-    Output('live-update-graph5','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike5','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateNifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
-@app.callback(
-    Output('live-update-graph6','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike6','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
-@app.callback(
-    Output('live-update-graph7','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike7','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
-@app.callback(
-    Output('live-update-graph8','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike8','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
-
-
-@app.callback(
-    Output('live-update-graph9','figure'),
-    Input('which-date-oi','date'),
-    Input('dropdownstrike9','value'),
-    Input('interval-component','n_intervals')
-)
-def update_strike_graph2(date_value,strikeValue,n):
-    date_string=""
-    if date_value is not None:
-        date_obj=date.fromisoformat(date_value)
-        date_string=date_obj.strftime('%Y-%m-%d')
-    ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-   
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
-    fig.layout.autosize=True
-    return fig
 
 app.run_server()
