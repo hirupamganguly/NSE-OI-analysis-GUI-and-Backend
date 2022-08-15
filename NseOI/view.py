@@ -1,4 +1,5 @@
 from time import time
+from unicodedata import name
 from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone 
@@ -10,6 +11,7 @@ import plotly.graph_objects as pgo
 from dash.dependencies import Output, Input
 import plotly.express as px
 import dash_bootstrap_components as dbc
+from plotly.subplots import make_subplots
 try:
     conn = MongoClient("mongodb://localhost:27017/")
     print("Connected successfully!!!")
@@ -373,8 +375,22 @@ def update_strike_graph(date_value,strikeValue,n):
         date_obj=date.fromisoformat(date_value)
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True,labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -393,8 +409,21 @@ def update_strike_graph1(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True,labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -412,8 +441,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -432,8 +474,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateNifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -452,8 +507,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateNifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -471,8 +539,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateNifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -490,8 +571,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -509,8 +603,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -528,8 +635,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
@@ -547,8 +667,21 @@ def update_strike_graph2(date_value,strikeValue,n):
         date_string=date_obj.strftime('%Y-%m-%d')
     ce_oi_fetched,ce_chng_oi_fetched,ce_impvol_fetched,ce_ltp_fetched,pe_oi_fetched,pe_chng_oi_fetched,pe_impvol_fetched,pe_ltp_fetched,fetched_time_list=docBystrikeAndDateBanknifty(int(strikeValue),date_string)
    
-    fig=px.line(x=fetched_time_list,y=ce_oi_fetched,markers=True, labels=dict(x="Time", y="OI",))
-    fig.update_layout(margin=dict(l=0, r=0, t=10, b=10),)
+    fig=make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+    )
+    fig.add_trace(
+        pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
+    fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
+    fig.update_yaxes(title_text="IV-Data",secondary_y=True)
     fig.layout.autosize=True
     return fig
 
