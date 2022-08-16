@@ -45,7 +45,7 @@ while True:
     fetchedTime=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S %Z %z')
 
     #BankNifty
-    bankNiftyfirstStrike=bankNiftyJson["records"]["data"][30]
+    bankNiftyfirstStrike=bankNiftyJson["records"]["data"][0]
     bankNiftyUnderlyting=bankNiftyfirstStrike["PE"]["underlyingValue"]
     bankNiftyAtmStrike= round(int(bankNiftyUnderlyting)/100)*100
     
@@ -77,7 +77,7 @@ while True:
                     data["PE"]["change"] = 0
                     data["PE"]["pChange "]= 0
                     data["PE"]["totalBuyQuantity"] = 0
-                    data["PE"]["totalSellQuantity "]= 0
+                    data["PE"]["totalSellQuantity"]= 0
                     data["PE"]["bidQty"] = 0
                     data["PE"]["bidprice"] = 0
                     data["PE"]["askQty"] = 0
@@ -85,7 +85,7 @@ while True:
                     data["PE"]["underlyingValue"] = bankNiftyUnderlyting
                 else:
                     if "totalSellQuantity" not in data["PE"]:
-                        data["PE"]["totalSellQuantity "]= 0
+                        data["PE"]["totalSellQuantity"]= 0
                     if "totalBuyQuantity" not in data["PE"]:
                         data["PE"]["totalBuyQuantity "]= 0
                     if "openInterest" not in data["PE"]:
@@ -120,7 +120,7 @@ while True:
                     data["CE"]["change"] = 0
                     data["CE"]["pChange "]= 0
                     data["CE"]["totalBuyQuantity"] = 0
-                    data["CE"]["totalSellQuantity "]= 0
+                    data["CE"]["totalSellQuantity"]= 0
                     data["CE"]["bidQty"] = 0
                     data["CE"]["bidprice"] = 0
                     data["CE"]["askQty"] = 0
@@ -128,7 +128,7 @@ while True:
                     data["CE"]["underlyingValue"] = bankNiftyUnderlyting
                 else:
                     if "totalSellQuantity" not in data["CE"]:
-                        data["CE"]["totalSellQuantity "]= 0
+                        data["CE"]["totalSellQuantity"]= 0
                     if "totalBuyQuantity" not in data["CE"]:
                         data["CE"]["totalBuyQuantity "]= 0
                     if "openInterest" not in data["CE"]:
@@ -153,7 +153,7 @@ while True:
                 bankNiftyObjlist.append(bankNiftyObjmap)
 
     #Nifty
-    niftyfirstStrike=niftyJson["records"]["data"][20]
+    niftyfirstStrike=niftyJson["records"]["data"][0]
     niftyUnderlyting=niftyfirstStrike["PE"]["underlyingValue"]
     niftyAtmStrike= round(int(niftyUnderlyting)/50)*50
     
@@ -184,7 +184,7 @@ while True:
                     data["PE"]["change"] = 0
                     data["PE"]["pChange "]= 0
                     data["PE"]["totalBuyQuantity"] = 0
-                    data["PE"]["totalSellQuantity "]= 0
+                    data["PE"]["totalSellQuantity"]= 0
                     data["PE"]["bidQty"] = 0
                     data["PE"]["bidprice"] = 0
                     data["PE"]["askQty"] = 0
@@ -192,7 +192,7 @@ while True:
                     data["PE"]["underlyingValue"] = bankNiftyUnderlyting
                 else:
                     if "totalSellQuantity" not in data["PE"]:
-                        data["PE"]["totalSellQuantity "]= 0
+                        data["PE"]["totalSellQuantity"]= 0
                     if "totalBuyQuantity" not in data["PE"]:
                         data["PE"]["totalBuyQuantity "]= 0
                     if "openInterest" not in data["PE"]:
@@ -227,7 +227,7 @@ while True:
                     data["CE"]["change"] = 0
                     data["CE"]["pChange "]= 0
                     data["CE"]["totalBuyQuantity"] = 0
-                    data["CE"]["totalSellQuantity "]= 0
+                    data["CE"]["totalSellQuantity"]= 0
                     data["CE"]["bidQty"] = 0
                     data["CE"]["bidprice"] = 0
                     data["CE"]["askQty"] = 0
@@ -235,7 +235,7 @@ while True:
                     data["CE"]["underlyingValue"] = bankNiftyUnderlyting
                 else:
                     if "totalSellQuantity" not in data["CE"]:
-                        data["CE"]["totalSellQuantity "]= 0
+                        data["CE"]["totalSellQuantity"]= 0
                     if "totalBuyQuantity" not in data["CE"]:
                         data["CE"]["totalBuyQuantity "]= 0
                     if "openInterest" not in data["CE"]:

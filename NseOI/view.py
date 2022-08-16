@@ -46,7 +46,7 @@ def docLatestBankNifty():
     pe_oi_map={}
     chng_ce_oi_map={}
     chng_pe_oi_map={}
-    for i in range (bankNiftyAtmStrike-4000,bankNiftyAtmStrike+4000,100):
+    for i in range (bankNiftyAtmStrike-2000,bankNiftyAtmStrike+2000,100):
         bnfOneCursor=bankNiftyCollection.find({"strikePrice":i}).sort('_id', -1).limit(1)
         for bnfData in bnfOneCursor:
             ce_oi_map[i]=bnfData["ce_openInterest"]
@@ -54,7 +54,7 @@ def docLatestBankNifty():
             chng_ce_oi_map[i]=bnfData["ce_changeinOpenInterest"]
             chng_pe_oi_map[i]=bnfData["pe_changeinOpenInterest"]
     df=pd.DataFrame({'strike':ce_oi_map.keys(),'ce_oi':list(ce_oi_map.values()),'chng_ce_oi':list(chng_ce_oi_map.values()),'pe_oi':list(pe_oi_map.values()),'chng_pe_oi':list(chng_pe_oi_map.values())})
-    return df
+    return df ,ce_oi_map,pe_oi_map,chng_ce_oi_map,chng_pe_oi_map
 
 def docLatestNifty():
     print("fetched data for: docLatestNifty")
@@ -70,7 +70,7 @@ def docLatestNifty():
             chng_ce_oi_map[i]=nfData["ce_changeinOpenInterest"]
             chng_pe_oi_map[i]=nfData["pe_changeinOpenInterest"]
     df=pd.DataFrame({'strike':ce_oi_map.keys(),'ce_oi':list(ce_oi_map.values()),'chng_ce_oi':list(chng_ce_oi_map.values()),'pe_oi':list(pe_oi_map.values()),'chng_pe_oi':list(chng_pe_oi_map.values())})
-    return df
+    return df ,ce_oi_map,pe_oi_map,chng_ce_oi_map,chng_pe_oi_map
 
 
 
@@ -298,17 +298,7 @@ BarGraphStyle={
     "width": "100%",
 }
 app.layout=dhtml.Div([ 
-    dbc.Row([
-        dbc.Col(dhtml.Div([
-            dcc.Graph(id="live-update-barchart1",animate=True,style=BarGraphStyle,
-            )
-        ])),
-        dbc.Col(dhtml.Div([
-            dcc.Graph(id="live-update-barchart2",animate=True,style=BarGraphStyle,
-            )
-        ]))
-    ]),
-    dbc.Row([
+    dbc.Row([ #------DatePicker
         dcc.DatePickerSingle(
             id='which-date-oi',
             style=DateStyle,
@@ -317,68 +307,121 @@ app.layout=dhtml.Div([
             initial_visible_month=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2])),
             date=date(int(dateArr[0]),int(dateArr[1]),int(dateArr[2])),
         ),
-    ]),
-    dbc.Row([
-        # Col 1
+    ]), #------DatePicker
+    # dbc.Row([ #-----Bar Chart
+    #     dbc.Col(dhtml.Div([
+    #         dcc.Graph(id='live-update-bar-chart-bnf',animate=False)
+    #     ])),
+    #     dbc.Col(dhtml.Div([
+    #         dcc.Graph(id='live-update-bar-chart-nf',animate=False)
+    #     ]))
+    # ]),
+    #------- BankNifty
+    dbc.Row([ #------DropDown-1
         dbc.Col(dhtml.Div([
-            dbc.Row([ 
-            dbc.Col(dhtml.Div([
-                dcc.Dropdown(
-                    id='dropdownStrike1',
-                    style=ColumnStyle,
-                    options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                    value=str(bankNiftyAtmStrike),
-                ),
-                ])),
-            dbc.Col(dhtml.Div([
-                    dcc.Dropdown(
-                    id='dropdownType1',
-                    style=ColumnStyle,
-                    options=[{"label":"CE", "value":"CE"},{"label":"PE", "value":"PE"}],
-                    value="CE",
-                ),
-                ])),
-            ]),
-        dbc.Row([
-            dbc.Col(dhtml.Div([
-                dcc.Graph(id="live-update-graph1",animate=True)]),style=ColumnStyle,),
-            ]),
+            dcc.Dropdown(
+                id='dropdownStrike1',
+                style=ColumnStyle,
+                options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
+                value=str(bankNiftyAtmStrike),
+            ),
         ])),
-
-        # Col 2
         dbc.Col(dhtml.Div([
-            dbc.Row([ 
-            dbc.Col(dhtml.Div([
-                dcc.Dropdown(
-                    id='dropdownStrike2',
-                    style=ColumnStyle,
-                    options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
-                    value=str(bankNiftyAtmStrike),
-                ),
-                ])),
-            dbc.Col(dhtml.Div([
-                    dcc.Dropdown(
-                    id='dropdownType2',
-                    style=ColumnStyle,
-                    options=[{"label":"CE", "value":"CE"},{"label":"PE", "value":"PE"}],
-                    value="CE",
-                ),
-                ])),
-            ]),
-        dbc.Row([
-            dbc.Col(dhtml.Div([
-                dcc.Graph(id="live-update-graph2",animate=True)]),style=ColumnStyle,),
-            ]),
+            dcc.Dropdown(
+                id='dropdownType1',
+                style=ColumnStyle,
+                options=[{"label":"CE", "value":"CE"},{"label":"PE", "value":"PE"}],
+                value="CE",
+            ),
+        ]))
+    ]), #------DropDown-1
+    dbc.Row([ #------Graph1
+        dbc.Col(dhtml.Div([
+            dcc.Graph(id="live-update-graph-BNF",animate=False)]),style=ColumnStyle,),
+    ]), #------Graph1
+    #---- Nifty
+    dbc.Row([ #------DropDown-1
+        dbc.Col(dhtml.Div([
+            dcc.Dropdown(
+                id='dropdownStrike2',
+                style=ColumnStyle,
+                options=[{"label":str(i),"value":str(i)} for i in range(bankNiftyAtmStrike-1000,bankNiftyAtmStrike+1000,100)],
+                value=str(bankNiftyAtmStrike),
+            ),
         ])),
-    
-    ]),
+        dbc.Col(dhtml.Div([
+            dcc.Dropdown(
+                id='dropdownType2',
+                style=ColumnStyle,
+                options=[{"label":"CE", "value":"CE"},{"label":"PE", "value":"PE"}],
+                value="CE",
+            ),
+        ]))
+    ]), #------DropDown-1
+    dbc.Row([ #------Graph1
+        dbc.Col(dhtml.Div([
+            dcc.Graph(id="live-update-graph-NF",animate=False)]),style=ColumnStyle,),
+    ]), #------Graph1
+    #--------Global refresh
     dcc.Interval(
         id="interval-component",interval=100*1000,n_intervals=0
     ),
 ])  
 
+# @app.callback(
+#     Output('live-update-bar-chart-bnf','figure'),
+#     Input('interval-component', 'n_intervals')
+# )
+# def updateBarChartBnf(n):
+#     df,ce_oi_map,pe_oi_map,chng_ce_oi_map,chng_pe_oi_map=docLatestBankNifty()
+   
+#     fig = pgo.Figure()
+#     fig.add_trace(pgo.Bar(
+#         y=[i for i in ce_oi_map.keys()],
+#         x=[i for i in ce_oi_map.values()],
+#         name='CE',
+#         marker_color='green',
+#         orientation='h'
+#     ))
+#     fig.add_trace(pgo.Bar(
+#         y=[i for i in pe_oi_map.keys()],
+#         x=[i for i in pe_oi_map.values()],
+#         name='PE',
+#         marker_color='red',
+#         orientation='h'
+        
+#     ))
+#     fig.update_layout(barmode='group', xaxis_tickangle=-90,)
+#     return fig
+
+
+# @app.callback(
+#     Output('live-update-bar-chart-nf','figure'),
+#     Input('interval-component', 'n_intervals')
+# )
+# def updateBarChartNf(n):
+#     df,ce_oi_map,pe_oi_map,chng_ce_oi_map,chng_pe_oi_map=docLatestNifty()
+   
+#     fig = pgo.Figure()
+#     fig.add_trace(pgo.Bar(
+#         y=[i for i in ce_oi_map.keys()],
+#         x=[i for i in ce_oi_map.values()],
+#         name='CE',
+#         marker_color='green',
+#         orientation='h'
+#     ))
+#     fig.add_trace(pgo.Bar(
+#         y=[i for i in pe_oi_map.keys()],
+#         x=[i for i in pe_oi_map.values()],
+#         name='PE',
+#         marker_color='red',
+#         orientation='h'
+#     ))
+#     fig.update_layout(barmode='group', xaxis_tickangle=-90,)
+#     return fig
+
 @app.callback(
-    Output('live-update-graph1','figure'),
+    Output('live-update-graph-BNF','figure'),
     Input('which-date-oi','date'),
     Input('dropdownStrike1','value'),
     Input('dropdownType1','value'),
@@ -393,15 +436,15 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
     if strikeType=="CE":
         fig=make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+            pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data",mode='lines',),secondary_y=False,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data",mode='lines',),secondary_y=True,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
         fig.update_xaxes(title_text="Time")
         fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
         fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
@@ -410,15 +453,15 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=pe_ltp_fetched,name="LTP-Data"),secondary_y=False,
+            pgo.Scatter(x=fetched_time_list,y=pe_ltp_fetched,name="LTP-Data",mode='lines',),secondary_y=False,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=pe_impvol_fetched,name="IV-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y=pe_impvol_fetched,name="IV-Data",mode='lines',),secondary_y=True,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
         fig.update_xaxes(title_text="Time")
         fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
         fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
@@ -428,7 +471,7 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
 
 
 @app.callback(
-    Output('live-update-graph2','figure'),
+    Output('live-update-graph-NF','figure'),
     Input('which-date-oi','date'),
     Input('dropdownStrike2','value'),
     Input('dropdownType2','value'),
@@ -443,15 +486,15 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
     if strikeType=="CE":
         fig=make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data"),secondary_y=False,
+            pgo.Scatter(x=fetched_time_list,y=ce_ltp_fetched,name="LTP-Data",mode='lines',),secondary_y=False,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y=ce_impvol_fetched,name="IV-Data",mode='lines',),secondary_y=True,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
         fig.update_xaxes(title_text="Time")
         fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
         fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
@@ -460,43 +503,20 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=pe_ltp_fetched,name="LTP-Data"),secondary_y=False,
+            pgo.Scatter(x=fetched_time_list,y=pe_ltp_fetched,name="LTP-Data",mode='lines'),secondary_y=False,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y=pe_impvol_fetched,name="IV-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y=pe_impvol_fetched,name="IV-Data",mode='lines'),secondary_y=True,
         )
         fig.add_trace(
-            pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data"),secondary_y=True,
+            pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h")
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
         fig.update_xaxes(title_text="Time")
         fig.update_yaxes(title_text="CHNG_OI-Data",secondary_y=False)
         fig.update_yaxes(title_text="LTP-Data",secondary_y=True)
         fig.update_yaxes(title_text="IV-Data",secondary_y=True)
         fig.layout.autosize=True
-    return fig
-
-@app.callback(
-    Output('live-update-barchart1','figure'),
-    Input('interval-component', 'n_intervals')
-)
-def updateBarChart1(n):
-    df=docLatestBankNifty()
-    fig = px.bar(df, x = 'strike', y = ['ce_oi','pe_oi'])
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),barmode='group'),
-    fig.layout.autosize=True
-    return fig
-
-
-@app.callback(
-    Output('live-update-barchart2','figure'),
-    Input('interval-component', 'n_intervals')
-)
-def updateBarChart2(n):
-    df=docLatestNifty()
-    fig = px.bar(df, x = 'strike', y = ['ce_oi','pe_oi'])
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),barmode='group'),
-    fig.layout.autosize=True
     return fig
 
 app.run_server()
