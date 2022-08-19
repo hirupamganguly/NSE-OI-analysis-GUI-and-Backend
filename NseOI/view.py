@@ -340,7 +340,7 @@ app.layout=dhtml.Div([
             dcc.Graph(id="live-update-graph-BNF",animate=False)]),style=ColumnStyle,),
     ]), #------Graph1
     #---- Nifty
-    dbc.Row([ #------DropDown-1
+    dbc.Row([ #------DropDown-2
         dbc.Col(dhtml.Div([
             dcc.Dropdown(
                 id='dropdownStrike2',
@@ -357,15 +357,15 @@ app.layout=dhtml.Div([
                 value="CE",
             ),
         ]))
-    ]), #------DropDown-1
-    dbc.Row([ #------Graph1
+    ]), #------DropDown-2
+    dbc.Row([ #------Graph2
         dbc.Col(dhtml.Div([
             dcc.Graph(id="live-update-graph-NF",animate=False)]),style=ColumnStyle,),
-    ]), #------Graph1
+    ]), #------Graph2
     #--------Global refresh
     dcc.Interval(
         id="interval-component",interval=100*1000,n_intervals=0
-    ),
+    ), #--------Global refresh
 ])  
 
 # @app.callback(
