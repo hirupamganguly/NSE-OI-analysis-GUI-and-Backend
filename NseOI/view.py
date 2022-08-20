@@ -1,3 +1,4 @@
+from sqlite3 import Timestamp
 from time import time
 from unicodedata import name
 from pymongo import MongoClient
@@ -8,7 +9,7 @@ import dash
 from dash import html as dhtml
 from dash import dcc
 import plotly.graph_objects as pgo
-from dash.dependencies import Output, Input
+from dash.dependencies import Output, Input, State
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
@@ -18,7 +19,9 @@ try:
     print("Connected successfully!!!")
 except:  
     print("Could not connect to MongoDB")
-
+# TempNotes
+databse = conn["NseOI"]
+noteCollection = databse["Notes"]
 # database
 databse = conn["NseOI"]
 bankNiftyCollection = databse["BankNifty"]
@@ -297,6 +300,30 @@ DateStyle = {
 BarGraphStyle={
     "width": "100%",
 }
+NoteStyle={
+    'width': '100%', 
+    'height': 200,
+    "margin-left": "1rem",
+    "margin-right": "1rem",
+    "padding": ".1rem .2rem",
+}
+ButtonStyle={
+    'width': '100%', 
+    'height': 50,
+    "margin-left": "1rem",
+    "margin-right": "1rem",
+    "padding": ".02rem .02rem",
+    'background-color': 'cyan',
+    'color': 'black',
+}
+NoteShowStyle={
+    'whiteSpace': 'pre-line',
+    'width': '100%', 
+    'height': 200,
+    "margin-left": "1rem",
+    "margin-right": "1rem",
+    "padding": ".02rem .02rem",
+}
 app.layout=dhtml.Div([ 
     dbc.Row([ #------DatePicker
         dcc.DatePickerSingle(
@@ -525,6 +552,33 @@ app.layout=dhtml.Div([
     #--------Global refresh
     #------- Nifty
 
+    # DB Futures Update:
+    
+    # DB NOTES ADD:
+    dbc.Row([
+        dbc.Col(dhtml.Div([
+            dcc.Textarea(
+                id='textarea-state',
+                value='',
+                style=NoteStyle,
+            ),
+            dbc.Col(dhtml.Div([
+                dbc.Row([
+                    dbc.Col(dhtml.Div([
+                        dhtml.Button('Submit', id='textarea-state-button', n_clicks=0, style=ButtonStyle,),
+                    ])),
+                    dbc.Col(dhtml.Div([
+                        dbc.Button("ERASE-DB (double click)", id="example-button", style=ButtonStyle, n_clicks=0),
+                        dhtml.Span(id="example-output", style={"verticalAlign": "middle"}),
+                    ])),
+                ]),
+            ])),
+        ])),
+        dbc.Col(dhtml.Div([
+            dhtml.Div(id='textarea-state-output', style=NoteShowStyle)
+        ]))
+    ]),
+    
     dcc.Interval(
         id="interval-component",interval=100*1000,n_intervals=0
     ), #--------Global refresh
@@ -947,5 +1001,32 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.layout.autosize=True
     return fig
 
+@app.callback(
+    Output('textarea-state-output', 'children'),
+    Input('textarea-state-button', 'n_clicks'),
+    State('textarea-state', 'value')
+)
+def update_output(n_clicks, value):
+    crTime=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
+    if n_clicks > 0:
+        notes={'time':crTime,'note':value}
+        notesRecordID = noteCollection.insert_one(notes)
+        notesCursor=noteCollection.find({'time':crTime}).sort('_id', -1)
+        notesArr=""
+        for noteDoc in notesCursor:
+            notesArr=notesArr+"\n"+noteDoc['note']
+        return '{}'.format(notesArr)
+
+@app.callback(
+    Output("example-output", "children"), [Input("example-button", "n_clicks")]
+)
+def on_button_click(n):
+    crTime=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
+    if n is None:
+        return "Double Click to Delete."
+    else:
+        if n > 1:
+            noteCollection.delete_many({'time':crTime})
+            return f"DB-DELETED"
 
 app.run_server()
