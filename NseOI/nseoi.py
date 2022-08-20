@@ -8,7 +8,11 @@ import time
 from datetime import datetime
 from pytz import timezone 
 import sys
+from datetime import date
+
 def determineMarketCloseTime(curTime):
+    if date.today().weekday() == 5 or date.today().weekday() == 6: 
+        return False
     arr=str.split(str(curTime),":")
     if (int(arr[0])>16 or int(arr[0])<8):
         return False
@@ -50,7 +54,7 @@ while True:
             retryCounter=0
         except:
             retryCounter=retryCounter+1
-            if retryCounter<2:
+            if retryCounter<3:
                 continue
             else:
                 break
@@ -62,7 +66,7 @@ while True:
             retryCounter=0
         except:
             retryCounter=retryCounter+1
-            if retryCounter<2:
+            if retryCounter<3:
                 continue
             else:
                 break
@@ -79,8 +83,12 @@ while True:
         fetchedTime=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S %Z %z')
 
         #BankNifty
-        # if "records" not in bankNiftyJson:
-        #     continue
+        if "records" not in bankNiftyJson:
+            retryCounter=retryCounter+1
+            if retryCounter<3:
+                continue
+            else:
+                break
         bankNiftyfirstStrike=bankNiftyJson["records"]["data"][0]
         bankNiftyUnderlyting=bankNiftyfirstStrike["PE"]["underlyingValue"]
         bankNiftyAtmStrike= round(int(bankNiftyUnderlyting)/100)*100
@@ -189,6 +197,12 @@ while True:
                     bankNiftyObjlist.append(bankNiftyObjmap)
 
         #Nifty
+        if "records" not in niftyJson:
+            retryCounter=retryCounter+1
+            if retryCounter<3:
+                continue
+            else:
+                break
         niftyfirstStrike=niftyJson["records"]["data"][0]
         niftyUnderlyting=niftyfirstStrike["PE"]["underlyingValue"]
         niftyAtmStrike= round(int(niftyUnderlyting)/50)*50
@@ -299,7 +313,7 @@ while True:
         niftyRecordID = niftyCollection.insert_many(niftyObjlist)
         print("timeStamp",fetchedTime," BankNifty ID: ",bankNiftyRecordID," Nifty ID: ",niftyRecordID)
         curTime=datetime.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S')
-        isMarketOpen=determineMarketCloseTime(curTime="17:56:34")
+        isMarketOpen=determineMarketCloseTime(curTime=curTime)
         if not isMarketOpen:
             sys.exit()
         time.sleep(200)
