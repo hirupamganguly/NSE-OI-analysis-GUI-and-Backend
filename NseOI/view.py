@@ -14,18 +14,19 @@ import plotly.express as px
 import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
 import pandas as pd
+import json
 try:
     conn = MongoClient("mongodb://localhost:27017/")
     print("Connected successfully!!!")
 except:  
     print("Could not connect to MongoDB")
-# TempNotes
-databse = conn["NseOI"]
-noteCollection = databse["Notes"]
+
 # database
 databse = conn["NseOI"]
 bankNiftyCollection = databse["BankNifty"]
 niftyCollection = databse["Nifty"]
+participantWiseCollection = databse["ParticipantWiseOI"]
+noteCollection = databse["Notes"]
 
 today_date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
 dateArr=str.split(today_date,'-')
@@ -75,7 +76,43 @@ def docLatestNifty():
     df=pd.DataFrame({'strike':ce_oi_map.keys(),'ce_oi':list(ce_oi_map.values()),'chng_ce_oi':list(chng_ce_oi_map.values()),'pe_oi':list(pe_oi_map.values()),'chng_pe_oi':list(chng_pe_oi_map.values())})
     return df ,ce_oi_map,pe_oi_map,chng_ce_oi_map,chng_pe_oi_map
 
+def docOfParticipantWiseOI(date):
+    doc=participantWiseCollection.find_one({'timestamp':date})
+    clientFutPos=int(doc['Client_Future_Index_Long'.lower()])-int(doc['Client_Future_Index_Short'.lower()])
+    clientFutStockPos=int(doc['Client_Future_Stock_Long'.lower()])-int(doc['Client_Future_Stock_Short'.lower()])
+    clientOPLongPos=int(doc['Client_Option_Index_Call_Long'.lower()])-int(doc['Client_Option_Index_Put_Long'.lower()])
+    clientOPShortPos=int(doc['Client_Option_Index_Call_Short'.lower()])-int(doc['Client_Option_Index_Put_Short'.lower()])
+    clientStockLongPos=int(doc['Client_Option_Stock_Call_Long'.lower()])-int(doc['Client_Option_Stock_Put_Long'.lower()])
+    clientStockShortPos=int(doc['Client_Option_Stock_Call_Short'.lower()])-int(doc['Client_Option_Stock_Put_Short'.lower()])
 
+    diiFutPos=int(doc['DII_Future_Index_Long'.lower()])-int(doc['DII_Future_Index_Short'.lower()])
+    diiFutStockPos=int(doc['DII_Future_Stock_Long'.lower()])-int(doc['DII_Future_Stock_Short'.lower()])
+    diiOPLongPos=int(doc['DII_Option_Index_Call_Long'.lower()])-int(doc['DII_Option_Index_Put_Long'.lower()])
+    diiOPShortPos=int(doc['DII_Option_Index_Call_Short'.lower()])-int(doc['DII_Option_Index_Put_Short'.lower()])
+    diiStockLongPos=int(doc['DII_Option_Stock_Call_Long'.lower()])-int(doc['DII_Option_Stock_Put_Long'.lower()])
+    diiStockShortPos=int(doc['DII_Option_Stock_Call_Short'.lower()])-int(doc['DII_Option_Stock_Put_Short'.lower()])
+
+    fiiFutPos=int(doc['FII_Future_Index_Long'.lower()])-int(doc['FII_Future_Index_Short'.lower()])
+    fiiFutStockPos=int(doc['FII_Future_Stock_Long'.lower()])-int(doc['FII_Future_Stock_Short'.lower()])
+    fiiOPLongPos=int(doc['FII_Option_Index_Call_Long'.lower()])-int(doc['FII_Option_Index_Put_Long'.lower()])
+    fiiOPShortPos=int(doc['FII_Option_Index_Call_Short'.lower()])-int(doc['FII_Option_Index_Put_Short'.lower()])
+    fiiStockLongPos=int(doc['FII_Option_Stock_Call_Long'.lower()])-int(doc['FII_Option_Stock_Put_Long'.lower()])
+    fiiStockShortPos=int(doc['FII_Option_Stock_Call_Short'.lower()])-int(doc['FII_Option_Stock_Put_Short'.lower()])
+
+    proFutPos=int(doc['Pro_Future_Index_Long'.lower()])-int(doc['Pro_Future_Index_Short'.lower()])
+    proFutStockPos=int(doc['Pro_Future_Stock_Long'.lower()])-int(doc['Pro_Future_Stock_Short'.lower()])
+    proOPLongPos=int(doc['Pro_Option_Index_Call_Long'.lower()])-int(doc['Pro_Option_Index_Put_Long'.lower()])
+    proOPShortPos=int(doc['Pro_Option_Index_Call_Short'.lower()])-int(doc['Pro_Option_Index_Put_Short'.lower()])
+    proStockLongPos=int(doc['Pro_Option_Stock_Call_Long'.lower()])-int(doc['Pro_Option_Stock_Put_Long'.lower()])
+    proStockShortPos=int(doc['Pro_Option_Stock_Call_Short'.lower()])-int(doc['Pro_Option_Stock_Put_Short'.lower()])
+
+    clientDf=pd.DataFrame({'FutureIndex':clientFutPos,'FutureStock':clientFutStockPos,'OptionLong':clientOPLongPos,'OptionShort':clientOPShortPos})
+    diiDf=pd.DataFrame({'FutureIndex':diiFutPos,'FutureStock':diiFutStockPos,'OptionLong':diiOPLongPos,'OptionShort':diiOPShortPos,'StockLong':diiStockLongPos,'StockShort':diiStockShortPos})
+    fiiDf=pd.DataFrame({'FutureIndex':fiiFutPos,'FutureStock':fiiFutStockPos,'OptionLong':fiiOPLongPos,'OptionShort':fiiOPShortPos,'StockLong':fiiStockLongPos,'StockShort':fiiStockShortPos})
+    proDf=pd.DataFrame({'FutureIndex':proFutPos,'FutureStock':proFutStockPos,'OptionLong':proOPLongPos,'OptionShort':proOPShortPos,'StockLong':proStockLongPos,'StockShort':proStockShortPos})
+    return clientDf,diiDf,fiiDf,proDf
+
+    
 
 def docBystrikeAndDateBanknifty(strike,today_date):
     print("fetched data for: ",strike,"ATM is: ",bankNiftyAtmStrike ,"date: ",today_date)
@@ -1001,6 +1038,9 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.layout.autosize=True
     return fig
 
+#DB Futures
+
+#Notes
 @app.callback(
     Output('textarea-state-output', 'children'),
     Input('textarea-state-button', 'n_clicks'),
