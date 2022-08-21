@@ -78,39 +78,52 @@ def docLatestNifty():
 
 def docOfParticipantWiseOI(date):
     doc=participantWiseCollection.find_one({'timestamp':date})
-    clientFutPos=int(doc['Client_Future_Index_Long'.lower()])-int(doc['Client_Future_Index_Short'.lower()])
-    clientFutStockPos=int(doc['Client_Future_Stock_Long'.lower()])-int(doc['Client_Future_Stock_Short'.lower()])
-    clientOPLongPos=int(doc['Client_Option_Index_Call_Long'.lower()])-int(doc['Client_Option_Index_Put_Long'.lower()])
-    clientOPShortPos=int(doc['Client_Option_Index_Call_Short'.lower()])-int(doc['Client_Option_Index_Put_Short'.lower()])
-    clientStockLongPos=int(doc['Client_Option_Stock_Call_Long'.lower()])-int(doc['Client_Option_Stock_Put_Long'.lower()])
-    clientStockShortPos=int(doc['Client_Option_Stock_Call_Short'.lower()])-int(doc['Client_Option_Stock_Put_Short'.lower()])
+    if doc==None:
+        proX=['0','0']
+        proY=[0,0]
+        fiiX=['0','0']
+        fiiY=[0,0]
+        diiX=['0','0']
+        diiY=[0,0]
+        clientX=['0','0']
+        clientY=[0,0]
+        return proX,proY,fiiX,fiiY,diiX,diiY,clientX,clientY
+    clientFutPos=int(doc['client_future_index_long'])-int(doc['client_future_index_short'])
+    clientFutStockPos=int(doc['client_future_stock_long'])-int(doc['client_future_stock_short'])
+    clientOPLongPos=int(doc['client_option_index_call_long'])-int(doc['client_option_index_put_long'])
+    clientOPShortPos=int(doc['client_option_index_call_short'])-int(doc['client_option_index_put_short'])
+    clientStockLongPos=int(doc['client_option_stock_call_long'])-int(doc['client_option_stock_put_long'])
+    clientStockShortPos=int(doc['client_option_stock_call_short'])-int(doc['client_option_stock_put_short'])
 
-    diiFutPos=int(doc['DII_Future_Index_Long'.lower()])-int(doc['DII_Future_Index_Short'.lower()])
-    diiFutStockPos=int(doc['DII_Future_Stock_Long'.lower()])-int(doc['DII_Future_Stock_Short'.lower()])
-    diiOPLongPos=int(doc['DII_Option_Index_Call_Long'.lower()])-int(doc['DII_Option_Index_Put_Long'.lower()])
-    diiOPShortPos=int(doc['DII_Option_Index_Call_Short'.lower()])-int(doc['DII_Option_Index_Put_Short'.lower()])
-    diiStockLongPos=int(doc['DII_Option_Stock_Call_Long'.lower()])-int(doc['DII_Option_Stock_Put_Long'.lower()])
-    diiStockShortPos=int(doc['DII_Option_Stock_Call_Short'.lower()])-int(doc['DII_Option_Stock_Put_Short'.lower()])
+    diiFutPos=int(doc['dii_future_index_long'])-int(doc['dii_future_index_short'])
+    diiFutStockPos=int(doc['dii_future_stock_long'])-int(doc['dii_future_stock_short'])
+    diiOPLongPos=int(doc['dii_option_index_call_long'])-int(doc['dii_option_index_put_long'])
+    diiOPShortPos=int(doc['dii_option_index_call_short'])-int(doc['dii_option_index_put_short'])
+    diiStockLongPos=int(doc['dii_option_stock_call_long'])-int(doc['dii_option_stock_put_long'])
+    diiStockShortPos=int(doc['dii_option_stock_call_short'])-int(doc['dii_option_stock_put_short'])
 
-    fiiFutPos=int(doc['FII_Future_Index_Long'.lower()])-int(doc['FII_Future_Index_Short'.lower()])
-    fiiFutStockPos=int(doc['FII_Future_Stock_Long'.lower()])-int(doc['FII_Future_Stock_Short'.lower()])
-    fiiOPLongPos=int(doc['FII_Option_Index_Call_Long'.lower()])-int(doc['FII_Option_Index_Put_Long'.lower()])
-    fiiOPShortPos=int(doc['FII_Option_Index_Call_Short'.lower()])-int(doc['FII_Option_Index_Put_Short'.lower()])
-    fiiStockLongPos=int(doc['FII_Option_Stock_Call_Long'.lower()])-int(doc['FII_Option_Stock_Put_Long'.lower()])
-    fiiStockShortPos=int(doc['FII_Option_Stock_Call_Short'.lower()])-int(doc['FII_Option_Stock_Put_Short'.lower()])
+    fiiFutPos=int(doc['fii_future_index_long'])-int(doc['fii_future_index_short'])
+    fiiFutStockPos=int(doc['fii_future_stock_long'])-int(doc['fii_future_stock_short'])
+    fiiOPLongPos=int(doc['fii_option_index_call_long'])-int(doc['fii_option_index_put_long'])
+    fiiOPShortPos=int(doc['fii_option_index_call_short'])-int(doc['fii_option_index_put_short'])
+    fiiStockLongPos=int(doc['fii_option_stock_call_long'])-int(doc['fii_option_stock_put_long'])
+    fiiStockShortPos=int(doc['fii_option_stock_call_short'])-int(doc['fii_option_stock_put_short'])
 
-    proFutPos=int(doc['Pro_Future_Index_Long'.lower()])-int(doc['Pro_Future_Index_Short'.lower()])
-    proFutStockPos=int(doc['Pro_Future_Stock_Long'.lower()])-int(doc['Pro_Future_Stock_Short'.lower()])
-    proOPLongPos=int(doc['Pro_Option_Index_Call_Long'.lower()])-int(doc['Pro_Option_Index_Put_Long'.lower()])
-    proOPShortPos=int(doc['Pro_Option_Index_Call_Short'.lower()])-int(doc['Pro_Option_Index_Put_Short'.lower()])
-    proStockLongPos=int(doc['Pro_Option_Stock_Call_Long'.lower()])-int(doc['Pro_Option_Stock_Put_Long'.lower()])
-    proStockShortPos=int(doc['Pro_Option_Stock_Call_Short'.lower()])-int(doc['Pro_Option_Stock_Put_Short'.lower()])
-
-    clientDf=pd.DataFrame({'FutureIndex':clientFutPos,'FutureStock':clientFutStockPos,'OptionLong':clientOPLongPos,'OptionShort':clientOPShortPos})
-    diiDf=pd.DataFrame({'FutureIndex':diiFutPos,'FutureStock':diiFutStockPos,'OptionLong':diiOPLongPos,'OptionShort':diiOPShortPos,'StockLong':diiStockLongPos,'StockShort':diiStockShortPos})
-    fiiDf=pd.DataFrame({'FutureIndex':fiiFutPos,'FutureStock':fiiFutStockPos,'OptionLong':fiiOPLongPos,'OptionShort':fiiOPShortPos,'StockLong':fiiStockLongPos,'StockShort':fiiStockShortPos})
-    proDf=pd.DataFrame({'FutureIndex':proFutPos,'FutureStock':proFutStockPos,'OptionLong':proOPLongPos,'OptionShort':proOPShortPos,'StockLong':proStockLongPos,'StockShort':proStockShortPos})
-    return clientDf,diiDf,fiiDf,proDf
+    proFutPos=int(doc['pro_future_index_long'])-int(doc['pro_future_index_short'])
+    proFutStockPos=int(doc['pro_future_stock_long'])-int(doc['pro_future_stock_short'])
+    proOPLongPos=int(doc['pro_option_index_call_long'])-int(doc['pro_option_index_put_long'])
+    proOPShortPos=int(doc['pro_option_index_call_short'])-int(doc['pro_option_index_put_short'])
+    proStockLongPos=int(doc['pro_option_stock_call_long'])-int(doc['pro_option_stock_put_long'])
+    proStockShortPos=int(doc['pro_option_stock_call_short'])-int(doc['pro_option_stock_put_short'])
+    proX=['P_FUT_INDX','P_FUT_STK','P_OP_LONG','P_OP_SHORT','P_STK_LONG','P_STK_SHORT']
+    proY=[proFutPos,proFutStockPos,proOPLongPos,proOPShortPos,proStockLongPos,proStockShortPos]
+    fiiX=['FI_FUT_INDX','FI_FUT_STK','FI_OP_LONG','FI_OP_SHORT','FI_STK_LONG','FI_STK_SHORT']
+    fiiY=[fiiFutPos,fiiFutStockPos,fiiOPLongPos,fiiOPShortPos,fiiStockLongPos,fiiStockShortPos]
+    diiX=['DI_FUT_INDX','DI_FUT_STK','DI_OP_LONG','DI_OP_SHORT','DI_STK_LONG','DI_STK_SHORT']
+    diiY=[diiFutPos,diiFutStockPos,diiOPLongPos,diiOPShortPos,diiStockLongPos,diiStockShortPos]
+    clientX=['CL_FUT_INDX','CL_FUT_STK','CL_OP_LONG','CL_OP_SHORT','CL_STK_LONG','CL_STK_SHORT']
+    clientY=[clientFutPos,clientFutStockPos,clientOPLongPos,clientOPShortPos,clientStockLongPos,clientStockShortPos]
+    return proX,proY,fiiX,fiiY,diiX,diiY,clientX,clientY
 
     
 
@@ -361,6 +374,10 @@ NoteShowStyle={
     "margin-right": "1rem",
     "padding": ".02rem .02rem",
 }
+TxtAlignCenter={
+    'text-align': 'center'
+}
+
 app.layout=dhtml.Div([ 
     dbc.Row([ #------DatePicker
         dcc.DatePickerSingle(
@@ -590,7 +607,13 @@ app.layout=dhtml.Div([
     #------- Nifty
 
     # DB Futures Update:
-    
+    dhtml.Div([dhtml.H4("Previous Day Participant Wise OI",style=TxtAlignCenter)]),
+    dbc.Row([
+        dbc.Col(dhtml.Div([dcc.Graph(id='live-update-bar-participants-client',animate=False,)]),width=6, lg=3),
+        dbc.Col(dhtml.Div([dcc.Graph(id='live-update-bar-participants-fii',animate=False,)]),width=6, lg=3),
+        dbc.Col(dhtml.Div([dcc.Graph(id='live-update-bar-participants-dii',animate=False,)]),width=6, lg=3),
+        dbc.Col(dhtml.Div([dcc.Graph(id='live-update-bar-participants-pro',animate=False,)]),width=6, lg=3),
+    ]),
     # DB NOTES ADD:
     dbc.Row([
         dbc.Col(dhtml.Div([
@@ -637,7 +660,7 @@ def updateBarChartBnf(n):
                     mode='lines+markers',
                     marker_color='red',
                     name='BNF: PE_OI'))
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest',)
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest',)
     fig.layout.autosize=True
     return fig
 
@@ -657,7 +680,7 @@ def updateBarChartNf(n):
                     mode='lines+markers',
                     marker_color='red',
                     name='NF: PE_OI'))
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
     fig.layout.autosize=True
     return fig
 
@@ -677,7 +700,7 @@ def updateBarChartChngNf(n):
                     mode='lines+markers',
                     marker_color='red',
                     name='BNF: CHNG_PE_OI'))
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
     fig.layout.autosize=True
     return fig
 
@@ -697,7 +720,7 @@ def updateBarChartChngNf(n):
                     mode='lines+markers',
                     marker_color='red',
                     name='NF: CHNG_PE_OI'))
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
     fig.layout.autosize=True
     return fig
 
@@ -726,7 +749,7 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -739,7 +762,7 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
@@ -768,7 +791,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -781,7 +804,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
@@ -810,7 +833,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -823,7 +846,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
@@ -852,7 +875,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -865,7 +888,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
@@ -894,7 +917,7 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -907,7 +930,7 @@ def update_strike_graph1(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
@@ -936,7 +959,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -949,7 +972,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig  
 
@@ -979,7 +1002,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -992,7 +1015,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
@@ -1021,7 +1044,7 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= ce_chng_oi_fetched,name="CHNG-OI-Data",mode='lines',),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     else:
         fig=make_subplots(specs=[[{"secondary_y": True}]])
@@ -1034,11 +1057,70 @@ def update_strike_graph2(date_value,strikeValue,strikeType,n):
         fig.add_trace(
             pgo.Scatter(x=fetched_time_list,y= pe_chng_oi_fetched,name="CHNG-OI-Data",mode='lines'),secondary_y=True,
         )
-        fig.update_layout(margin=dict(l=0, r=0, t=40, b=10),legend_orientation="h",hovermode='closest')
+        fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),legend_orientation="h",hovermode='closest')
         fig.layout.autosize=True
     return fig
 
 #DB Futures
+@app.callback(
+    Output('live-update-bar-participants-client','figure'),
+    Input('which-date-oi','date'),
+)
+def updateliveupdatebarparticipantsclient(date):
+    dateArr=str.split(date,'-')
+    dateNumber=int(dateArr[2])-1
+    dateString=dateArr[0]+'-'+dateArr[1]+'-'+str(dateNumber)
+    proX,proY,fiiX,fiiY,diiX,diiY,clientX,clientY=docOfParticipantWiseOI(date=dateString)
+    fig = px.bar(x=clientX, y=clientY)
+    fig.update_yaxes(title='')
+    fig.update_xaxes(title='0> CE side, 0< PE side')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),)
+    return fig
+
+@app.callback(
+    Output('live-update-bar-participants-fii','figure'),
+    Input('which-date-oi','date'),
+)
+def updateliveupdatebarparticipantsfii(date):
+    dateArr=str.split(date,'-')
+    dateNumber=int(dateArr[2])-1
+    dateString=dateArr[0]+'-'+dateArr[1]+'-'+str(dateNumber)
+    proX,proY,fiiX,fiiY,diiX,diiY,clientX,clientY=docOfParticipantWiseOI(date=dateString)
+    fig = px.bar(x=fiiX, y=fiiY)
+    fig.update_yaxes(title='')
+    fig.update_xaxes(title='0> CE side, 0< PE side')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),)
+    return fig
+
+@app.callback(
+    Output('live-update-bar-participants-dii','figure'),
+    Input('which-date-oi','date'),
+)
+def updateliveupdatebarparticipantsdii(date):
+    dateArr=str.split(date,'-')
+    dateNumber=int(dateArr[2])-1
+    dateString=dateArr[0]+'-'+dateArr[1]+'-'+str(dateNumber)
+    proX,proY,fiiX,fiiY,diiX,diiY,clientX,clientY=docOfParticipantWiseOI(date=dateString)
+    fig = px.bar(x=diiX, y=diiY,)
+    fig.update_yaxes(title='')
+    fig.update_xaxes(title='0> CE side, 0< PE side')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),)
+    return fig
+
+@app.callback(
+    Output('live-update-bar-participants-pro','figure'),
+    Input('which-date-oi','date'),
+)
+def updateliveupdatebarparticipantspro(date):
+    dateArr=str.split(date,'-')
+    dateNumber=int(dateArr[2])-1
+    dateString=dateArr[0]+'-'+dateArr[1]+'-'+str(dateNumber)
+    proX,proY,fiiX,fiiY,diiX,diiY,clientX,clientY=docOfParticipantWiseOI(date=dateString)
+    fig = px.bar(x=proX, y=proY)
+    fig.update_yaxes(title='')
+    fig.update_xaxes(title='0> CE side, 0< PE side')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=20),)
+    return fig
 
 #Notes
 @app.callback(
