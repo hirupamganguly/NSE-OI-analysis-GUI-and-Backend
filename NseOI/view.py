@@ -19,6 +19,36 @@ except:
     print("Could not connect to MongoDB")
 
 # database
+# {
+#   "_id": {
+#     "$oid": "62fb1ac27630c3484e259394"
+#   },
+#   "date": "2022-08-16",
+#   "nse_timestamp": "16-Aug-2022 09:47:49",
+#   "strikePrice": 35400,
+#   "expiryDate": "18-Aug-2022",
+#   "underlyingValue": 39404.6,
+#   "ce_lastPrice": 0,
+#   "ce_openInterest": 1,
+#   "ce_changeinOpenInterest": 0,
+#   "ce_totalTradedVolume": 0,
+#   "ce_impliedVolatility": 0,
+#   "ce_totalBuyQuantity": 4650,
+#   "ce_totalSellQuantity": 4650,
+#   "pe_lastPrice": 3.8,
+#   "pe_openInterest": 795,
+#   "pe_changeinOpenInterest": -405,
+#   "pe_totalTradedVolume": 3205,
+#   "pe_impliedVolatility": 59.97,
+#   "pe_totalBuyQuantity": 32250,
+#   "pe_totalSellQuantity": 11575,
+#   "current_expiry": "18-Aug-2022",
+#   "next_expiry": "25-Aug-2022",
+#   "fetched_time": "2022-08-16 09:49:14 IST +0530"
+# }
+
+
+#----------------------------
 databse = conn["NseOI"]
 bankNiftyCollection = databse["BankNifty"]
 niftyCollection = databse["Nifty"]

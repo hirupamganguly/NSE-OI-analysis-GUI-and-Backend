@@ -8,6 +8,87 @@ try:
     print("Connected successfully!!!")
 except:  
     print("Could not connect to MongoDB")
+# DATABSE
+
+# {
+#   "_id": {
+#     "$oid": "63011f5e37c89c3154437cbc"
+#   },
+#   "timestamp": "2022-08-15",
+#   "client_future_index_long": "251591",
+#   "client_future_index_short": "210671",
+#   "client_future_stock_long": "1246282",
+#   "client_future_stock_short": "318002",
+#   "client_option_index_call_long": "3048975",
+#   "client_option_index_put_long": "2125356",
+#   "client_option_index_call_short": "2843805",
+#   "client_option_index_put_short": "2332376",
+#   "client_option_stock_call_long": "1229748",
+#   "client_option_stock_put_long": "482802",
+#   "client_option_stock_call_short": "871648",
+#   "client_option_stock_put_short": "539532",
+#   "client_total_long_contracts": "8384753",
+#   "client_total_short_contracts": "7116033",
+#   "dii_future_index_long": "42529",
+#   "dii_future_index_short": "68491",
+#   "dii_future_stock_long": "48252",
+#   "dii_future_stock_short": "1444445",
+#   "dii_option_index_call_long": "719",
+#   "dii_option_index_put_long": "113347",
+#   "dii_option_index_call_short": "0",
+#   "dii_option_index_put_short": "0",
+#   "dii_option_stock_call_long": "0",
+#   "dii_option_stock_put_long": "0",
+#   "dii_option_stock_call_short": "92928",
+#   "dii_option_stock_put_short": "0",
+#   "dii_total_long_contracts": "204847",
+#   "dii_total_short_contracts": "1605864",
+#   "fii_future_index_long": "93581",
+#   "fii_future_index_short": "99631",
+#   "fii_future_stock_long": "1264544",
+#   "fii_future_stock_short": "882610",
+#   "fii_option_index_call_long": "371152",
+#   "fii_option_index_put_long": "425975",
+#   "fii_option_index_call_short": "314761",
+#   "fii_option_index_put_short": "261856",
+#   "fii_option_stock_call_long": "45147",
+#   "fii_option_stock_put_long": "41541",
+#   "fii_option_stock_call_short": "63979",
+#   "fii_option_stock_put_short": "30369",
+#   "fii_total_long_contracts": "2241940",
+#   "fii_total_short_contracts": "1653206",
+#   "pro_future_index_long": "41398",
+#   "pro_future_index_short": "50306",
+#   "pro_future_stock_long": "288399",
+#   "pro_future_stock_short": "202420",
+#   "pro_option_index_call_long": "866659",
+#   "pro_option_index_put_long": "777303",
+#   "pro_option_index_call_short": "1128938",
+#   "pro_option_index_put_short": "847750",
+#   "pro_option_stock_call_long": "370324",
+#   "pro_option_stock_put_long": "389210",
+#   "pro_option_stock_call_short": "616664",
+#   "pro_option_stock_put_short": "343652",
+#   "pro_total_long_contracts": "2733293",
+#   "pro_total_short_contracts": "3189729",
+#   "total_future_index_long": "429099",
+#   "total_future_index_short": "429099",
+#   "total_future_stock_long": "2847477",
+#   "total_future_stock_short": "2847477",
+#   "total_option_index_call_long": "4287503",
+#   "total_option_index_put_long": "3441981",
+#   "total_option_index_call_short": "4287503",
+#   "total_option_index_put_short": "3441981",
+#   "total_option_stock_call_long": "1645219",
+#   "total_option_stock_put_long": "913553",
+#   "total_option_stock_call_short": "1645219",
+#   "total_option_stock_put_short": "913553",
+#   "total_total_long_contracts": "13564832",
+#   "total_total_short_contracts": "13564832"
+# }
+
+
+# ------------------------
 databse = conn["NseOI"]
 participantWiseCollection = databse["ParticipantWiseOI"]
 def csv_to_json(filename, header=None):
