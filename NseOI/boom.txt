@@ -1,0 +1,3 @@
+https://www.nseindia.com/
+ bankNiftyUrl = "https://../api/option-chain-indices?symbol=BANK.."
+ NiftyUrl = "https://../api/option-chain-indices?symbol=NIFTY"
