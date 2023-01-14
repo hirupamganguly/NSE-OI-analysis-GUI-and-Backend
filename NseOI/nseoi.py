@@ -33,7 +33,7 @@ databse = conn["NseOI"]
 bankNiftyCollection = databse["BankNifty"]
 niftyCollection = databse["Nifty"]
 while True:
-    main_url = "https://www.nseindia.com/"
+    main_url = ".."
     try:
         response = requests.get(main_url, headers=headers)
         retry=0
@@ -48,7 +48,7 @@ while True:
     cookies = response.cookies
     retryCounter=0
     while True:
-        bankNiftyUrl = "https://www.nseindia.com/api/option-chain-indices?symbol=BANKNIFTY"
+        bankNiftyUrl = ".."
         try:
             bank_nifty_oi_data = requests.get(bankNiftyUrl, headers=headers, cookies=cookies)
             retryCounter=0
@@ -60,7 +60,7 @@ while True:
                 break
         print("BN OI StatusCode",bank_nifty_oi_data.status_code)
 
-        NiftyUrl = "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY"
+        NiftyUrl = ".."
         try:
             nifty_oi_data = requests.get(NiftyUrl, headers=headers, cookies=cookies)
             retryCounter=0
